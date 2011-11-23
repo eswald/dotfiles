@@ -1,0 +1,22 @@
+colorscheme darkblue
+set guifont=Terminus\ 12,DejaVu\ Sans\ Mono\ 10,Bitstream\ Vera\ Sans\ Mono\ 10,Liberation\ Mono\ 10,Monospace\ 10
+"set guifont=Terminus\ 12
+"set guifont=DejaVu\ Sans\ Mono\ 10
+"set guifont=Bitstream\ Vera\ Sans\ Mono\ 10
+"set guifont=Liberation\ Mono\ 10
+"set guifont=BPmono\ 13
+"set guifont=Inconsolata\ 12
+"set guifont=White\ Rabbit\ 12
+"set guifont=Rursus\ Compact\ Mono\ 11
+" iIlL 0Oo “‘`"'’” &%$#@!+-_[](){}\/ <=->
+
+" Toolbar and tab line options
+set showtabline=2
+set guioptions+=c
+set guioptions-=t
+set guioptions-=T
+
+" Until I'm done importing cassettes
+set vb t_vb=
+
+set guitablabel=%{EswaldGuiTabLabel()}

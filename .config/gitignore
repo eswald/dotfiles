@@ -1,0 +1,8 @@
+sandbox
+.hg
+.bzr
+.svn
+.*.swp
+*.egg-info
+*.pyc
+*~

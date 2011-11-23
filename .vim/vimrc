@@ -1,0 +1,258 @@
+set nocompatible
+set encoding=utf-8
+
+" Work with my standard file types.
+let g:filetype_w='wierd'
+let g:filetype_inc = 'php'
+filetype indent plugin on
+syntax on
+
+" See the numbers that accidentally become a prefix
+set showcmd
+
+" Convenient filename search from the command line.
+set wildmenu
+set wildmode=longest,list,full
+
+" Don't wrap lines, for most file types.
+set textwidth=0
+
+" Do not delete autoindent indentation.
+set cpo+=I
+
+" By default, do not double-space after punctuation.
+set nojoinspaces
+
+" Run the makefile on F8.
+nnoremap <F8> :update <Bar> make<CR>
+
+if version >= 700
+  " Experimental: Undo/redo the whole tree
+  "nnoremap u g-
+  "nnoremap <C-R> g+
+endif
+
+" Remove end-of-line spaces
+nnoremap <Leader>cs :%s/\S\zs\s\+$//<CR>
+vnoremap <Leader>cs :s/\S\zs\s\+$//<CR>
+
+" Allow Ctrl-G to cancel the command line
+cnoremap <C-G> <C-C>
+
+" Avoid flicker in ,, and certain other situations
+set lazyredraw
+
+" Proper tab redrawing
+if &term =~ ".*linux" || &term == "screen"
+  " Todo: Check whether the terminal handles utf-8 characters
+  set listchars=tab:»-,trail:·,extends:»,precedes:«
+elseif &term == "screen.linux"
+  " These settings worked for one screen, but something was odd with it.
+  set listchars=tab:«-,trail:þ,extends:«,precedes:¬
+else
+  " Use plain ASCII characters, just in case.
+  set listchars=tab:>-,eol:$,extends:>,precedes:<
+endif
+
+" Quick toggles for certain settings
+nnoremap <silent> <C-W><C-W> :set wrap!<CR>
+nnoremap <silent> gl :set list!<CR>
+nnoremap <silent> gn :set number!<CR>
+
+" Global search and replace
+nnoremap gc :%s/\<lt><C-R>=expand('<cword>')<CR>\>/<C-R>=expand('<cword>')<CR>/g<Left><Left>
+vnoremap gc y:%s/<C-R>"/<C-R>"/g<Left><Left>
+
+" Different Calendar plugin map
+nmap <Leader>ca <Plug>CalendarV
+nmap <Plug><Plug>ca <Plug>CalendarH
+
+" Visual block incrementation
+let visblockincr_default_commands = 1
+vnoremap <C-A> :II<CR>
+
+" Reverse lines (r) or characters (R)
+vnoremap <Leader>fr <Esc>'<O<Esc>V'>:g/^/m '<<CR>'<dd
+vnoremap <Leader>fR c<C-O>:set ri!<CR><C-R>"<Esc>:set ri!<CR>
+
+" Swapping paragraphs and words
+nnoremap zP {dap}p{
+nnoremap <silent> zw "_yiw:s/\(\%#\w\+\)\(\_W\+\)\(\w\+\)/\3\2\1/<CR><C-O>
+
+" Go URL (Yes, this intentionally leaves the user on the command line.)
+nmap gw :!w3m <C-R><C-A>
+
+" Always show the status line
+set laststatus=2 ruler
+
+" Display unusual file formats and keymaps on status line
+"set fileformats+=mac
+let g:main_ff = substitute(&fileformats, ',.*', '', '')
+set stl=%<%f\ %h%m%r%{&ff==g:main_ff?'':'['.&ff.']'}%=%k\ %-12.(%l,%c%V%)%P
+
+" nnoremap <silent> <CR> :noh<CR>
+" Highlight between matching brackets
+nnoremap <F2> %%%v%
+nnoremap <Esc>[26~ %%%V%
+
+" Auto-underline using hyphens
+nnoremap g- yyp^v$r-
+nnoremap g= yyp^v$r=
+
+" See your current changes
+" VimTip #1030, by Thomas Hein
+function! s:DiffWithSaved()
+  diffthis
+  vnew | 0r #
+  diffthis
+  setlocal bt=nofile bh=wipe nobl noswf ro
+endfunction
+com! Diff call s:DiffWithSaved()
+
+
+"Redate file headers automatically
+"autocmd BufWritePre * call RedateHeader()
+function! RedateHeader()
+  " Mark the current position, and find the end of the header (if possible)
+  silent! normal! msHmtgg$%
+  let lastline = line('.')
+  if lastline == 1
+    " Header not found, so use fifteen lines or the full file
+    let lastline = Min(15, line('$'))
+  endif
+
+  " Replace any timestamps discovered, in whatever format
+  silent! execute '1,' . lastline . 's/\m\%(date\|changed\?\|modifi\w\+\):\s\+"\?\zs\%(\a\|\d\|[/,:-]\)*/\=strftime("%d-%b-%Y")/ie'
+
+  " Increment the version marker
+  "silent! execute '1,' . lastline . "g/[Vv]ersion:/normal! $\<C-a>"
+
+  " Restore the marked position
+  silent! normal! 'tzt`s
+endf
+
+function! Min(number, ...)
+  let result = a:number
+  let index = a:0
+  while index > 0
+    let result = (a:{index} > result) ? result : a:{index}
+    let index = index - 1
+  endwhile
+  return result
+endf
+
+" Translate character sets, either in the current line, on a range, or in a string
+" Note that in this version, unmatched characters in old are deleted
+command! -nargs=* -range Transform <line1>,<line2> call Transform(<f-args>)
+function! Transform(old, new, ...)
+  let string = a:0 ? a:1 : getline('.')
+
+  let i = strlen(string)
+  while i > 0
+    let i = i - 1
+    let pos = stridx(a:old, string[i])
+    if pos > -1
+      let string = strpart(string, 0, i) . a:new[pos] . strpart(string, i + 1)
+    endif
+  endwhile
+
+  if a:0
+    return string
+  else
+    call setline('.', string)
+  endif
+endfunction
+
+noremap <silent> "" :Transform "' '"<CR>
+noremap <silent> "' :Transform " '<CR>
+noremap <silent> '" :Transform ' "<CR>
+
+" Spin-off from the above: switch a single character specified by index
+fun! StrSwitchPos(string, pos, char)
+  return strpart(a:string, 0, a:pos) . a:char . strpart(a:string, a:pos + 1)
+endfun
+
+" Character transposition
+inoremap zp <C-\><C-N>hxpa
+nnoremap zp xp
+
+" Single-word copy and paste
+nnoremap gY <C-\><C-N>"wyiW
+nnoremap gP viW"wp
+nnoremap gy <C-\><C-N>"wyiw
+nnoremap gp viw"wp
+
+" Easier tag finding
+"nnoremap <CR> <C-]>
+
+" Quick escape
+" nnoremap qq :close<CR>
+
+
+" Easy character duplication
+" nnoremap ; A;<Esc>
+nnoremap ; ylph
+
+" Quick insertion of a single character.
+" Lower-case t inserts before the cursor, upper-case T after.
+"nnoremap t "='<Space>'<CR>Pr
+nnoremap t i<Space><Esc>r
+nnoremap T a<Space><Esc>r
+
+" Quick insertion of a single line.
+nnoremap - o<Space><BS><Esc>
+nnoremap _ O<Space><BS><Esc>
+
+
+" Use jk as an easy escape sequence.
+inoremap jk <Space><BS><Esc>
+inoremap JK <Space><BS><Esc>
+
+" Use ,, to plug the current file's path into the command line.
+cnoremap ,, <Space><C-R>=substitute(substitute(substitute(expand('%:h'),'^\.$','',''),'.*[^/]','&/',''),'\s','\\&','g')<CR>
+
+" Command-line abbreviations to find the vim directory.
+"exec 'cab vimrc ' . expand('<sfile>')
+exec 'cab vimf ' . expand('<sfile>:h')
+
+" Make Y act more like D
+noremap Y y$
+
+let g:delimiter_keep_indent = 1
+let g:delimiter_use_filetype = 1
+let g:EnhCommentifyUserBindings = 'yes'
+
+" Show as much as possible of the current window.
+set noequalalways
+set winminheight=0
+autocmd BufEnter * wincmd _
+if !&diff
+  autocmd VimEnter * all | wincmd _
+endif
+
+" Show as much as possible of a very long last line.
+set display=lastline
+
+"Title-Case an entire line or selection
+nnoremap <silent> g\ :s/\<\(.\)\(\k*\)\>/\U\1\L\2/g<CR>
+vnoremap <silent> g\ s<C-R><C-R>=substitute(@", '\<\(.\)\(\k*\)\>', '\U\1\L\2', 'g')<CR><Esc>
+
+colors linux
+
+" Peeking at the syntax highlighting
+nnoremap <silent> + :echom <SID>getSyntax(line('.'), col('.'))<CR>
+function! s:getSyntax(bline, bcol)
+  if strlen(&ft) > 0
+    let trans = synIDattr(synID(a:bline, a:bcol, 0), 'name')
+    if strlen(trans) > 0
+      let visib = synID(a:bline, a:bcol, 1)
+      let vname = synIDattr(visib, 'name')
+      let light = synIDattr(synIDtrans(visib), 'name')
+      return 'Syntax: '.trans.(vname == trans?'':';  visible: '.vname).(light == vname?'':';  highlight: '.light)
+    else
+      return 'No syntax'
+    endif
+  else
+    return 'No filetype defined'
+  endif
+endf

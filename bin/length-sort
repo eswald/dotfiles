@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+import fileinput
+from sys import stdout
+for line in sorted(fileinput.input(), key=len):
+    try:
+        stdout.write(line)
+    except IOError:
+        break

@@ -1,0 +1,7 @@
+! Turn the Caps Lock key into an additional control
+! keycode  66 = Control_L
+clear lock
+add control = Caps_Lock
+
+! Make the menu key Compose
+keycode 117 = Multi_key

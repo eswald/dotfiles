@@ -1,0 +1,80 @@
+# Kill the startup message
+startup_message off
+
+# Remap the escape key
+escape `\\
+
+# Give myself a good other key, because the default has been remapped.
+bind = other
+bind \177 other
+
+# Easier window title key, because time is useless.
+bind t title
+
+# Direct access to windows 10-20
+bind ` select 0
+bind 0 select 10
+bind ! select 11
+bind @ select 12
+bind \043 select 13
+bind $ select 14
+bind % select 15
+bind \136 select 16
+bind & select 17
+bind * select 18
+bind ( select 19
+bind ) select 20
+
+# Quick access to shell screens
+bind - select bash
+
+# Hear the beep
+vbell off
+
+# Very important
+autodetach on
+
+# Increase the amount of saved text
+defscrollback 500
+
+# Make screen messages stand out a bit more
+sorendition "+b gM"
+
+# If a window goes unresponsive, don't block the whole session
+nonblock on
+
+# Toggle paste mode when pasting into vim, using ^] instead of ]
+register [ "\017:set paste\015"
+register ] "\017:set nopaste\015"
+bind ^] paste [.]
+bind } paste [.]
+
+# Move the copy and paste commands to make accidental pasting harder
+bind \033
+bind ; copy
+#bind ] echo "Use | to paste."
+bind | paste .
+
+# Don't even bother trying to find an xterm
+unsetenv DISPLAY
+
+# Bind left and right windows keys to shift windows
+bindkey "^[[28~" next
+bindkey "^[[26~" prev
+
+# In case that doesn't work, bind Ctrl-Left and Ctrl-Right
+bindkey "^[[1;5C" next
+bindkey "^[[1;5D" prev
+
+# Try to bind Ctrl-Tab and Ctrl-Shift-Tab
+#bindkey "^[[1;5C" next
+bindkey "^[[Z" prev
+
+# Todo: ^[[A / ^[[B to scroll up / down
+# This doesn't seem to work...
+# termcapinfo xterm ti@:te@
+
+# Show the window list and time, either on the first or last line
+hardstatus string '%{= mk}%-w%{= mw}%40>%n %t%{-}%+w%-18<%{= kg}%-18= %C %D, %d %M'
+hardstatus alwayslastline
+hardstatus alwaysfirstline

@@ -1,0 +1,22 @@
+--type-add
+php=.thtml
+
+--type-set
+json=.json
+
+--pager=less -R
+
+--ignore-dir
+tiny_mce
+
+--ignore-dir
+Zend
+
+--ignore-dir
+.deps
+
+--ignore-dir
+sandbox
+
+--ignore-dir
+flex

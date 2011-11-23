@@ -1,0 +1,65 @@
+#!/bin/bash
+# Partly based on comments and links from
+# http://buildmonkey.wordpress.com/2009/05/14/git-cat-contd/
+
+usage="Usage: git cat [REVISION] [--] FILE...\n
+\n
+Output the contents of each FILE as it appeared in REVISION (default HEAD).\n
+"
+
+# Check for error conditions and help requests
+if [ -z "$1" ]
+then
+  echo -e $usage
+  exit 1
+elif [ "$1" == "--help" ]
+then
+  echo -e $usage
+  exit 1
+elif [ "$1" == "-h" ]
+then
+  echo -e $usage
+  exit 1
+fi
+
+# Check for a commit identifier
+rev=HEAD
+if [ "$1" == "--" ]
+then
+  # Swallow the double dash
+  shift
+elif git rev-list --quiet "$1" -- 2>/dev/null
+then
+  # First param is a revision name.
+  rev="$1"
+  shift
+  
+  if [ "$1" == "--" ]
+  then
+    # Swallow the double dash
+    shift
+  elif ! git rev-list --quiet "$rev"
+  then
+    # First param is also a filename, and no double-dash given; abort.
+    # git rev-list has already provided a decent error message.
+    exit 1
+  fi
+fi
+
+# Discover our location in the repository
+dir="$(git rev-parse --show-prefix)"
+
+# Add the prefix to each parameter
+prefixed() {
+  prefix="$1"
+  shift
+  
+  while [ -n "$1" ]
+  do
+    echo "$prefix$1"
+    shift
+  done
+}
+
+# Pass the real work off to git show
+git show $(prefixed "$rev:$dir" "$@")

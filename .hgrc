@@ -1,0 +1,24 @@
+[ui]
+username = Eric Wald <eswald@brainshell.org>
+ignore = ~/.config/hgignore
+
+[alias]
+list = locate --include . '*'
+ls = list
+
+[pager]
+pager = LESS=-FiRS less
+
+[extensions]
+alias = ~/.config/hg-extensions/alias.py
+#autosync = ~/.config/hg-extensions/autosync.py
+boundmode = ~/.config/hg-extensions/boundmode.py
+color =
+#convert =
+fetch =
+graphlog =
+hgk =
+ignored = ~/.config/hg-extensions/ignored.py
+info = ~/.config/hg-extensions/info.py
+mq =
+pager =
