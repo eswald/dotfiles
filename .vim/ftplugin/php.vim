@@ -12,14 +12,14 @@ try
   silent %s/^\t//ne
   redir END
   if strlen(subcount)
-    let s:tablines = matchstr(subcount, '\d\+')
+    let s:tablines = matchstr(subcount, '\d\+') + 0
   endif
   
   redir => subcount
   silent %s/^    //ne
   redir END
   if strlen(subcount)
-    let s:spacelines = matchstr(subcount, '\d\+')
+    let s:spacelines = matchstr(subcount, '\d\+') + 0
   endif
 finally
   redir END
