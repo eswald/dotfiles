@@ -1,0 +1,15 @@
+#!/bin/bash
+# Launch the best graphical viewer available.
+
+if command -v qgit > /dev/null
+then
+  qgit --all --date-order "$@" 2> /dev/null &
+elif command -v gitg > /dev/null
+then
+  gitg "$@" 2> /dev/null &
+elif command -v gitk > /dev/null
+then
+  gitk --all --date-order "$@" &
+else
+  log --graph --date-order --pretty=format:\"%h %ae: %s\" "$@"
+fi
