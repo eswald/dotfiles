@@ -2,7 +2,9 @@ sandbox
 .hg
 .bzr
 .svn
+.eric4project
 .*.swp
 *.egg-info
 *.pyc
+*.e4p
 *~
