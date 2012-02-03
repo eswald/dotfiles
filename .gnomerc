@@ -1,0 +1,5 @@
+# Use my custom .XCompose sequences
+export GTK_IM_MODULE="xim"
+
+# Enable the Eject key at work
+xmodmap -e "keycode 199 = XF86Eject"
