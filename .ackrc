@@ -4,6 +4,9 @@ php=.thtml
 --type-set
 json=.json
 
+--type-set
+pascal=.pas,.lpr
+
 --pager=less -R
 
 --ignore-dir
