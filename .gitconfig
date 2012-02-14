@@ -10,7 +10,7 @@
 	glog = log --graph --date-order --pretty=format:\"%h %ae: %s\"
 	info = log -1 --oneline
 	list = ls-files
-	ls = !git ls-files | less -FiRSn
+	ls = !git ls-files \"$@\" | less -FiRSn && :
 	ignored = ls-files --others --ignored --exclude-standard --directory
 	cleanable = clean -dXn
 [core]
