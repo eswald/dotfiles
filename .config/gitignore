@@ -3,6 +3,7 @@ sandbox
 .bzr
 .svn
 .eric4project
+.*.nwc
 .*.swp
 *.egg-info
 *.pyc

@@ -6,13 +6,20 @@ __nosewords()
   local file base pattern words
   fname="$1"
   base="$2"
+  cname=."$fname".nwc
+  
+  if [ "$cname" -ot "$fname" ]
+  then
+    nosetests -v --collect-only "$fname" 2> "$cname"
+  fi
+  
   case "$base" in
     *.*)
       pattern='s/^\(\w\+\) (\w\+\.\(\w\+\)).*$/\2.\1/;s/^\w\+\.\(\w\+\) .*/\1 /';;
     *)
       pattern='s/^\(\w\+\) (\w\+\.\(\w\+\)).*$/\2/;s/^\w\+\.\(\w\+\) .*/\1 /';;
   esac
-  words=$(nosetests -v --collect-only "$fname" 2>&1 | grep 'ok$' | sed "$pattern" | uniq)
+  words=$(grep 'ok$' "$cname" | sed "$pattern" | uniq)
   compgen -W "${words}" -- "$base"
 }
 
