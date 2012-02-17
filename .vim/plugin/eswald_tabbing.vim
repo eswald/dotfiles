@@ -33,7 +33,7 @@ nnoremap <silent> `) 10gt
 nnoremap <silent> `<Backspace> :tablast<CR>
 
 " Tab naming
-nnoremap `t :let t:tabname=""<Left>
+nnoremap `t :let t:tabname="<C-R>=(exists('t:tabname')? t:tabname : '')<CR>"<Left>
 
 " For use in 'guitablabel'
 function! EswaldGuiTabLabel()
