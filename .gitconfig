@@ -6,6 +6,7 @@
 	where = !git branch -a && git log --branches --oneline --graph --decorate --simplify-by-decoration --since='2 months ago'
 	st = status
 	ci = commit
+	co = clone
 	logk = log --graph --date-order --pretty=format:\"%h %ae: %s\" --decorate --abbrev-commit
 	glog = log --graph --date-order --pretty=format:\"%h %ae: %s\"
 	info = log -1 --oneline
@@ -13,6 +14,10 @@
 	ls = !git ls-files \"$@\" | less -FiRSn && :
 	ignored = ls-files --others --ignored --exclude-standard --directory
 	cleanable = clean -dXn
+	uncommit = reset --soft HEAD^
+	unstage = reset HEAD --
+	cached = diff --cached
+	dc = diff --cached
 [core]
 	excludesfile = /home/eswald/.config/gitignore
 [color]
