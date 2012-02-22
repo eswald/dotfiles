@@ -17,6 +17,16 @@ else
   alias ipy="python"
 fi
 
+if command -v gnome-open > /dev/null
+then
+  alias open="gnome-open"
+elif command -v xdg-open > /dev/null
+then
+  alias open="xdg-open"
+else
+  alias open="less"
+fi
+
 # Debian uses "ack" for an entirely different command.
 if which ack-grep > /dev/null 2>&1
 then
