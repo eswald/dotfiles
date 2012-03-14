@@ -1,5 +1,6 @@
 set nocompatible
 set encoding=utf-8
+set fileencodings=ucs-bom,utf-8,default,cp1252
 
 " Work with my standard file types.
 let g:filetype_w='wierd'
