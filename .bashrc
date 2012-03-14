@@ -196,6 +196,15 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
+# Source any custom completion files.
+if [ -d ~/.config/bash ]
+then
+  for file in ~/.config/bash/*.sh
+  do
+    . $file
+  done
+fi
+
 #export NNTPSERVER=news.readfreenews.net:120
 #export NNTPSERVER=aioe.cjb.net
 
