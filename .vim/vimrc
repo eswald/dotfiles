@@ -89,7 +89,7 @@ set laststatus=2 ruler
 " Display unusual file formats and keymaps on status line
 "set fileformats+=mac
 let g:main_ff = substitute(&fileformats, ',.*', '', '')
-set stl=%<%f\ %h%m%r%{&ff==g:main_ff?'':'['.&ff.']'}%=%k\ %-12.(%l,%c%V%)%P
+set stl=%<%f\ %h%m%r%{&ff==g:main_ff?'':'['.&ff.']'}%{(&fenc==&enc\|\|&fenc=='')?'':'['.&fenc.']'}%=%k\ %-12.(%l,%c%V%)%P
 
 " nnoremap <silent> <CR> :noh<CR>
 " Highlight between matching brackets
