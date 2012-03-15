@@ -12,7 +12,6 @@
 <Multi_key> <space> <period>     	: " "   U2008 # PUNCTUATION SPACE
 
 <Multi_key> <o> <c>              	: "©"   copyright # COPYRIGHT SIGN
-<Multi_key> <o> <C>              	: "©"   copyright # COPYRIGHT SIGN
 <Multi_key> <O> <c>              	: "©"   copyright # COPYRIGHT SIGN
 <Multi_key> <O> <C>              	: "©"   copyright # COPYRIGHT SIGN
 
@@ -44,6 +43,9 @@
 <Multi_key> <A> <E>              	: "Æ"   AE # LATIN CAPITAL LETTER AE
 
 <Multi_key> <o> <o>              	: "°"   degree # DEGREE SIGN
+<Multi_key> <o> <f>              	: "°F"  # Degrees Farenheit
+<Multi_key> <o> <F>              	: "°F"  # Degrees Farenheit
+<Multi_key> <o> <C>              	: "°C"  # Degrees Celsius
 
 # Quotation marks
 <Multi_key> <less> <less>        	: "«"   guillemotleft # LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
