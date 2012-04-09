@@ -1,6 +1,7 @@
 #!/bin/sh
 # Open the commit graph in Dia.
-# Can accept the same arguments as git log; try --all and/or --date-order, for example.
+# Can accept the same arguments as git log;
+# try --all and/or --date-order, for example.
 # Might not be that pretty, but can be manipulated by hand.
 
 shellcode='''#'
@@ -10,7 +11,7 @@ shellcode='''#'
   
   (
     echo 'digraph G {'
-    git log --pretty=format:"%h %p%d" $* | perl -lne 'if (/([0-9a-f]+)((?: [0-9a-f]+)*)( \(.*\)|)/) { $name = $label = $1; foreach (split /[ (),]+/, $3) { $label .= "\\n$_" if $_;} print qq("$name" [label="$label"];); foreach (split / /, $2) { print qq("$_"->"$name";) if $_ } }'
+    git log --pretty=format:"%h %p%d" $* | perl -lnx "$0"
     echo '}'
   ) | dot -Tplain | python "$0" | gzip > $filename
   dia $filename 2>/dev/null
@@ -130,3 +131,21 @@ for line in fileinput.input():
         )
 
 print footer
+
+perlcode=r'''
+
+#!/usr/bin/perl
+
+if (/(\w+)((?: \w+)*)( \(.*\)|)/) {
+    my ($name, $label, $parents, $tags) = ($1, $1, $2, $3);
+    foreach (split /[ (),]+/, $tags) {
+        $label .= "\\n$_" if $_;
+    }
+    
+    print qq("$name" [label="$label"];);
+    foreach (split / /, $parents) {
+        print qq("$_"->"$name";) if $_;
+    }
+}
+
+#'''#"""#'''
