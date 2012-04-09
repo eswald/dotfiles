@@ -1,0 +1,130 @@
+#!/bin/sh
+# Open the commit graph in Dia.
+# Can accept the same arguments as git log; try --all, for example.
+# Might not be that pretty, but can be manipulated by hand.
+
+shellcode='''#'
+tempdir=~/.cache
+filename="$tempdir/git-log-$$.dia"
+
+(
+  echo 'digraph G {'
+  git log --pretty=format:"%h %p" $* | perl -lane 'print qq("$F[0]";), map {qq("$_"->"$F[0]";)} @F[1..$#F]'
+  echo '}'
+) | dot -Tplain | python "$0" | gzip > $filename
+dia $filename
+rm $filename
+
+exit
+'''#"""#'''
+
+#!/usr/bin/env python
+
+import fileinput
+from itertools import count
+
+header = r'''<?xml version="1.0" encoding="UTF-8"?>
+<dia:diagram xmlns:dia="http://www.lysator.liu.se/~alla/dia/">
+  <dia:diagramdata>
+    <dia:attribute name="pagebreak">
+      <dia:color val="#CCCCFF"/>
+    </dia:attribute>
+  </dia:diagramdata>
+  <dia:layer name="Main" visible="true" active="true">
+'''#"""#'''
+
+node = r'''
+    <dia:group>
+      <dia:object type="Standard - Ellipse" version="0" id="O{nodenum}">
+        <dia:attribute name="elem_corner">
+          <dia:point val="{tx},{ty}"/>
+        </dia:attribute>
+        <dia:attribute name="elem_width">
+          <dia:real val="{dx}"/>
+        </dia:attribute>
+        <dia:attribute name="elem_height">
+          <dia:real val="{dy}"/>
+        </dia:attribute>
+      </dia:object>
+      <dia:object type="Standard - Text" version="1" id="O{textnum}">
+        <dia:attribute name="obj_pos">
+          <dia:point val="{cx},{cy}"/>
+        </dia:attribute>
+        <dia:attribute name="text">
+          <dia:composite type="text">
+            <dia:attribute name="string">
+              <dia:string>#{label}#</dia:string>
+            </dia:attribute>
+            <dia:attribute name="height">
+              <dia:real val="0.8"/>
+            </dia:attribute>
+            <dia:attribute name="alignment">
+              <dia:enum val="1"/>
+            </dia:attribute>
+          </dia:composite>
+        </dia:attribute>
+        <dia:attribute name="valign">
+          <dia:enum val="2"/>
+        </dia:attribute>
+        <dia:connections>
+          <dia:connection handle="0" to="O{nodenum}" connection="8"/>
+        </dia:connections>
+      </dia:object>
+    </dia:group>
+'''#"""#'''
+
+edge = r'''
+    <dia:object type="Standard - Line" version="0" id="O{edgenum}">
+      <dia:attribute name="end_arrow">
+        <dia:enum val="3"/>
+      </dia:attribute>
+      <dia:connections>
+        <dia:connection handle="0" to="O{tailnum}" connection="8"/>
+        <dia:connection handle="1" to="O{headnum}" connection="8"/>
+      </dia:connections>
+    </dia:object>
+'''#"""#'''
+
+footer = r'''
+  </dia:layer>
+</dia:diagram>
+'''#"""#'''
+
+scale = 3.6
+
+print header
+
+nodes = {}
+nextid = count().next
+for line in fileinput.input():
+    words = [word.strip('"') for word in line.strip().split()]
+    if words[0] == "node":
+        name, x, y, width, height = words[1:6]
+        cx = float(x) * scale
+        cy = float(y) * scale
+        w = float(width) * scale
+        h = float(height) * scale
+        nodenum = nextid()
+        textnum = nextid()
+        nodes[name] = nodenum
+        print node.format(
+            nodenum = nodenum,
+            textnum = textnum,
+            label = name,
+            tx = cx - w*.5,
+            ty = cy - h*.5,
+            cx = cx,
+            cy = cy,
+            dx = w,
+            dy = h,
+        )
+    elif words[0] == "edge":
+        edgenum = nextid()
+        tail, head = words[1:3]
+        print edge.format(
+            edgenum = edgenum,
+            headnum = nodes[head],
+            tailnum = nodes[tail],
+        )
+
+print footer
