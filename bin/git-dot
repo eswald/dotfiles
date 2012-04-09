@@ -4,16 +4,18 @@
 # Might not be that pretty, but can be manipulated by hand.
 
 shellcode='''#'
-tempdir=~/.cache
-filename="$tempdir/git-log-$$.dia"
-
 (
-  echo 'digraph G {'
-  git log --pretty=format:"%h %p%d" $* | perl -lne 'if (/([0-9a-f]+)((?: [0-9a-f]+)*)( \(.*\)|)/) { $name = $label = $1; foreach (split /[ (),]+/, $3) { $label .= "\\n$_" if $_;} print qq("$name" [label="$label"];); foreach (split / /, $2) { print qq("$_"->"$name";) if $_ } }'
-  echo '}'
-) | dot -Tplain | python "$0" | gzip > $filename
-dia $filename
-rm $filename
+  tempdir=~/.cache
+  filename="$tempdir/git-log-$$.dia"
+  
+  (
+    echo 'digraph G {'
+    git log --pretty=format:"%h %p%d" $* | perl -lne 'if (/([0-9a-f]+)((?: [0-9a-f]+)*)( \(.*\)|)/) { $name = $label = $1; foreach (split /[ (),]+/, $3) { $label .= "\\n$_" if $_;} print qq("$name" [label="$label"];); foreach (split / /, $2) { print qq("$_"->"$name";) if $_ } }'
+    echo '}'
+  ) | dot -Tplain | python "$0" | gzip > $filename
+  dia $filename 2>/dev/null
+  rm $filename
+) &
 
 exit
 '''#"""#'''
