@@ -1,6 +1,6 @@
 #!/bin/sh
 # Open the commit graph in Dia.
-# Can accept the same arguments as git log; try --all, for example.
+# Can accept the same arguments as git log; try --all and/or --date-order, for example.
 # Might not be that pretty, but can be manipulated by hand.
 
 shellcode='''#'
@@ -9,7 +9,7 @@ filename="$tempdir/git-log-$$.dia"
 
 (
   echo 'digraph G {'
-  git log --pretty=format:"%h %p" $* | perl -lane 'print qq("$F[0]";), map {qq("$_"->"$F[0]";)} @F[1..$#F]'
+  git log --pretty=format:"%h %p%d" $* | perl -lne 'if (/([0-9a-f]+)((?: [0-9a-f]+)*)( \(.*\)|)/) { $name = $label = $1; foreach (split /[ (),]+/, $3) { $label .= "\\n$_" if $_;} print qq("$name" [label="$label"];); foreach (split / /, $2) { print qq("$_"->"$name";) if $_ } }'
   echo '}'
 ) | dot -Tplain | python "$0" | gzip > $filename
 dia $filename
@@ -99,7 +99,7 @@ nextid = count().next
 for line in fileinput.input():
     words = [word.strip('"') for word in line.strip().split()]
     if words[0] == "node":
-        name, x, y, width, height = words[1:6]
+        name, x, y, width, height, label = words[1:7]
         cx = float(x) * scale
         cy = float(y) * scale
         w = float(width) * scale
@@ -110,7 +110,7 @@ for line in fileinput.input():
         print node.format(
             nodenum = nodenum,
             textnum = textnum,
-            label = name,
+            label = label.replace("\\n", "&#x0A;"),
             tx = cx - w*.5,
             ty = cy - h*.5,
             cx = cx,
