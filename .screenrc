@@ -75,6 +75,6 @@ bindkey "^[[Z" prev
 # termcapinfo xterm ti@:te@
 
 # Show the window list and time, either on the first or last line
-hardstatus string '%{= mk}%-w%{= mw}%40>%n %t%{-}%+w%-18<%{= kg}%-18= %C %D, %d %M'
+hardstatus string '%{= mk}%H  %-w%{= mw}%40>%n %t%{-}%+w%-18<%{= kg}%-18= %C %D, %d %M'
 hardstatus alwayslastline
 hardstatus alwaysfirstline
