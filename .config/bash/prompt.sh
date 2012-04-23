@@ -29,65 +29,62 @@ fi
 
 if [ "$color_prompt" = yes ]
 then
-  red="\[\e[1;31m\]"
-  blue="\[\e[0;34m\]"
-  cyan="\[\e[0;36m\]"
-  green="\[\e[0;32m\]"
-  yellow="\[\e[0;33m\]"
-  normal="\[\e[0m\]"
-
-  #function eswald_prompt_exitcolor {
-  #  if [ "$1" = "0" ]
-  #  then
-  #    # No error: Dark blue
-  #    echo "[0;34m"
-  #  else
-  #    # Error: Bright red
-  #    echo "[1;31m"
-  #  fi
-  #}
-
-  function eswald_prompt_jobcolor {
+  function eswald_prompt {
+    # Collect the error code before any commands.
+    err=$?
+    
+    red="\[\e[1;31m\]"
+    blue="\[\e[0;34m\]"
+    cyan="\[\e[0;36m\]"
+    green="\[\e[0;32m\]"
+    yellow="\[\e[0;33m\]"
+    normal="\[\e[0m\]"
+    
+    if [ "$err" = "0" ]
+    then
+      # No error: Dark blue
+      exitcolor="$blue"
+    else
+      # Error: Bright red
+      exitcolor="$red"
+    fi
+    
     if jobs | grep -q Stopped
     then
       # Stopped jobs: Green
-      echo "[0;32m"
+      jobcolor="$green"
     else
       # No stopped jobs: Dark blue
-      echo "[0;34m"
+      jobcolor="$blue"
     fi
-  }
-
-  function eswald_prompt_pathcolor {
+    
     if [ -w "$PWD" ]
     then
       # Writable path: Cyan
-      echo "[0;36m"
+      pathcolor="$cyan"
     else
       # Unwritable path: Yellow/Brown
-      echo "[0;33m"
+      pathcolor="$yellow"
     fi
-  }
-  
-  function eswald_prompt_usercolor {
-    user="$1"
-    if [ "$user" = "eswald" ]
+    
+    if [ "$USER" = "eswald" ]
     then
       # Standard username: Dark blue
-      echo "[0;34m"
+      usercolor="$blue"
     else
-      # Unusual username: Cyan
-      echo "[0;36m"
+      # Unusual username: Green
+      usercolor="$green"
     fi
+    
+    exitcode="$exitcolor(exit $err)"
+    timecode="$blue(\t)"
+    jobcode="$jobcolor(\j jobs)"
+    usercode="$usercolor(\u@\H)"
+    pathcode="$pathcolor\w"
+    echo "$exitcode $usercode $timecode $jobcode$normal\n$pathcode$cyan>$normal "
   }
-
-  #exitcode="\[\e\$(eswald_prompt_exitcolor $?)\](exit $?)"
-  exitcode="\$(if [ \$? = 0 ]; then echo '$blue(exit '\$?')'; else echo '$red(exit '\$?')'; fi; )"
-  timecode="$blue(\t)"
-  jobcode="\[\e\$(eswald_prompt_jobcolor)\](\j jobs)"
-  usercode="\[\e\$(eswald_prompt_usercolor \u)\](\u@\H)"
-  pathcode="\[\e\$(eswald_prompt_pathcolor)\]\w"
-  PS1="$exitcode $usercode $timecode $jobcode$normal\n$pathcode$cyan>$normal "
+  
+  PROMPT_COMMAND='PS1="$(eswald_prompt)"'
 else
   PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
