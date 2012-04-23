@@ -68,14 +68,26 @@ then
       echo "[0;33m"
     fi
   }
+  
+  function eswald_prompt_usercolor {
+    user="$1"
+    if [ "$user" = "eswald" ]
+    then
+      # Standard username: Dark blue
+      echo "[0;34m"
+    else
+      # Unusual username: Cyan
+      echo "[0;36m"
+    fi
+  }
 
   #exitcode="\[\e\$(eswald_prompt_exitcolor $?)\](exit $?)"
   exitcode="\$(if [ \$? = 0 ]; then echo '$blue(exit '\$?')'; else echo '$red(exit '\$?')'; fi; )"
   timecode="$blue(\t)"
   jobcode="\[\e\$(eswald_prompt_jobcolor)\](\j jobs)"
-  usercode="$cyan\u"
+  usercode="\[\e\$(eswald_prompt_usercolor \u)\](\u@\H)"
   pathcode="\[\e\$(eswald_prompt_pathcolor)\]\w"
-  PS1="$exitcode $timecode $jobcode$normal\n$usercode:$pathcode$cyan>$normal "
+  PS1="$exitcode $usercode $timecode $jobcode$normal\n$pathcode$cyan>$normal "
 else
   PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
