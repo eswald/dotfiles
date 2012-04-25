@@ -113,3 +113,39 @@ if command -v notify-send > /dev/null
 then
   alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 fi
+
+# "repeat" command, from Brian Fox.
+# Usage: repeat 10 echo foo
+function repeat {
+  local count="$1" i
+  shift
+  for i in $(seq "$count")
+  do
+    # Don't use eval here; it destroys a layer of quoting.
+    (exec "$@")
+  done
+}
+
+# Print a sequence of numbers.
+# Needed by `repeat()`, but might already exist.
+if ! command -v seq > /dev/null
+then
+  function seq {
+    local lower upper
+    lower=1
+    upper="$1"
+    
+    if ! [ "$lower" -le "$upper" ]
+    then
+      return
+    fi
+    
+    while [ "$lower" -lt "$upper" ]
+    do
+      echo $lower
+      lower=$(($lower + 1))
+    done
+    
+    echo $lower
+  }
+fi
