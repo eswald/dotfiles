@@ -20,6 +20,7 @@ then
     # Collect the error code before any commands.
     err=$?
     
+    bright="\[\e[1m\]"
     red="\[\e[1;31m\]"
     blue="\[\e[0;34m\]"
     cyan="\[\e[0;36m\]"
@@ -63,10 +64,17 @@ then
       usercolor="$green"
     fi
     
+    if [ -n "$VIRTUAL_ENV" ]
+    then
+      envcode="/$bright$(basename "$VIRTUAL_ENV")$usercolor"
+    else
+      envcode=""
+    fi
+    
     exitcode="$exitcolor(exit $err)"
     timecode="$blue(\t)"
     jobcode="$jobcolor(\j jobs)"
-    usercode="$usercolor(\u@\H)"
+    usercode="$usercolor(\u@\H$envcode)"
     pathcode="$pathcolor\w"
     echo "$exitcode $usercode $timecode $jobcode$normal\n$pathcode$cyan>$normal "
   }
