@@ -36,7 +36,7 @@ shopt -s checkwinsize
 [ -x /usr/bin/lesspipe ] && eval "$(lesspipe)"
 [ -x /usr/bin/lessfilter ] && export LESSOPEN='|lessfilter %s'
 #export LESSCHARSET=iso8859
-export LESS=-FiRS
+export LESS=-FiRnS
 
 # Unbuffered python, in a custom environment
 export PYTHONUNBUFFERED=1
