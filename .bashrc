@@ -3,6 +3,11 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
+if [ -f /etc/bashrc ]
+then
+  . /etc/bashrc
+fi
+
 # don't put duplicate lines in the history. See bash(1) for more options
 export HISTCONTROL=ignoredups
 # ... and ignore entries that start with spaces.
