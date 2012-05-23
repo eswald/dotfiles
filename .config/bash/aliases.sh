@@ -67,6 +67,17 @@ function bar {
   esac
 }
 
+# Aliases and pagers for darcs.
+function da {
+  case "$1" in
+    ci|commit) shift; darcs record --edit-long-comment "$@" ;;
+    diff) shift; darcs diff -u "$@" | colordiff | less -FiRSn ;;
+    log) shift; darcs changes "$@" | less -FiRSn ;;
+    st*) shift; darcs whatsnew -ls "$@" | less -FiRSn ;;
+    *) darcs "$@" ;;
+  esac
+}
+
 # Automatic pager for certain subversion commands.
 function svn {
   case "$1" in
