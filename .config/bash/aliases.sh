@@ -18,6 +18,14 @@ else
   PAGER="cat"
 fi
 
+# Colorize and page tree output, by default.
+if [ -x /usr/bin/tree ]
+then
+  function tree {
+    /usr/bin/tree -C "$@" | $PAGER
+  }
+fi
+
 # Use an enhanced python when available,
 # but keep it within the virtualenv.
 if which ipython > /dev/null 2>&1
