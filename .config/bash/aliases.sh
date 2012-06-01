@@ -7,6 +7,17 @@ alias cd..='cd ..'
 alias s='cd ..'
 alias df='df -Th'
 
+# Find a decent pager
+if command -v less > /dev/null 2>&1
+then
+  export PAGER="less $LESS"
+elif command -v more > /dev/null 2>&1
+then
+  export PAGER="more"
+else
+  PAGER="cat"
+fi
+
 # Use an enhanced python when available,
 # but keep it within the virtualenv.
 if which ipython > /dev/null 2>&1
@@ -23,7 +34,7 @@ elif command -v xdg-open > /dev/null
 then
   alias open="xdg-open"
 else
-  alias open="less"
+  alias open="$PAGER"
 fi
 
 # Debian uses "ack" for an entirely different command.
@@ -41,7 +52,7 @@ if which colordiff > /dev/null 2>&1
 then
   # Automatic colorization and paging for diffs
   function diff {
-    colordiff -uwr "$@" | less -FiRS
+    colordiff -uwr "$@" | $PAGER
   }
 else
   # Avoid breaking the version control aliases below
@@ -49,7 +60,7 @@ else
   
   # Automatic paging and formatting for diffs
   function diff {
-    /usr/bin/diff -uw "$@" | less -FiRS
+    /usr/bin/diff -uw "$@" | $PAGER
   }
 fi
 
@@ -58,11 +69,11 @@ complete -F _bzr -o default bar
 function bar {
   case "$1" in
     view) shift; bzr visualize "$@" & ;;
-    blame) shift; bzr annotate "$@" | less -FiSn ;;
-    diff) bzr "$@" | colordiff | less -FiRSn ;;
-    help) bzr "$@" | less -FiRSn ;;
-    log) bzr "$@" | less -FiRSn ;;
-    st) bzr "$@" | less -FiRSn ;;
+    blame) shift; bzr annotate "$@" | $PAGER ;;
+    diff) bzr "$@" | colordiff | $PAGER ;;
+    help) bzr "$@" | $PAGER ;;
+    log) bzr "$@" | $PAGER ;;
+    st) bzr "$@" | $PAGER ;;
     *) bzr "$@" ;;
   esac
 }
@@ -71,9 +82,9 @@ function bar {
 function da {
   case "$1" in
     ci|commit) shift; darcs record --edit-long-comment "$@" ;;
-    diff) shift; darcs diff -u "$@" | colordiff | less -FiRSn ;;
-    log) shift; darcs changes "$@" | less -FiRSn ;;
-    st*) shift; darcs whatsnew -ls "$@" | less -FiRSn ;;
+    diff) shift; darcs diff -u "$@" | colordiff | $PAGER ;;
+    log) shift; darcs changes "$@" | $PAGER ;;
+    st*) shift; darcs whatsnew -ls "$@" | $PAGER ;;
     *) darcs "$@" ;;
   esac
 }
@@ -81,12 +92,12 @@ function da {
 # Automatic pager for certain subversion commands.
 function svn {
   case "$1" in
-    diff) /usr/bin/svn "$@" --no-diff-deleted | colordiff | less -FiRSn ;;
-    less) shift; /usr/bin/svn cat "$@" | less -FiRSn ;;
-    blame) /usr/bin/svn "$@" | less -FiSn ;;
-    help) /usr/bin/svn "$@" | less -FiSn ;;
-    log) /usr/bin/svn "$@" | less -Fn ;;
-    st) /usr/bin/svn "$@" | less -Fn ;;
+    diff) /usr/bin/svn "$@" --no-diff-deleted | colordiff | $PAGER ;;
+    less) shift; /usr/bin/svn cat "$@" | $PAGER ;;
+    blame) /usr/bin/svn "$@" | $PAGER ;;
+    help) /usr/bin/svn "$@" | $PAGER ;;
+    log) /usr/bin/svn "$@" | $PAGER ;;
+    st) /usr/bin/svn "$@" | $PAGER ;;
     *) /usr/bin/svn "$@" ;;
   esac
 }
