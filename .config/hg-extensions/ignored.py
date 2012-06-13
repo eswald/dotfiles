@@ -20,7 +20,12 @@ def ignored(ui, repo, *pats, **opts):
     cwd = (pats and repo.getcwd()) or ''
     end = opts.get('print0') and '\0' or '\n'
     
-    files = status(repo.dirstate, cmdutil.match(repo, pats, opts))
+    try:
+        match = cmdutil.match
+    except AttributeError:
+        from mercurial.match import match
+    
+    files = status(repo.dirstate, match(repo, pats, opts))
     
     format = "%s" + end
     for f in sorted(files):
