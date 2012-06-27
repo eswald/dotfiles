@@ -12,5 +12,8 @@ noremap <buffer> v <c-v>
 ab wierd wierd
 unab wierd
 
+" Search for subroutine definition
+nnoremap <buffer> [d /^<C-R>=expand('<cword>')<CR>:<CR>
+
 au WinEnter <buffer> set virtualedit=all
 au WinLeave <buffer> set virtualedit=block
