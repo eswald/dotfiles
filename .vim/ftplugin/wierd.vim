@@ -12,8 +12,5 @@ noremap <buffer> v <c-v>
 ab wierd wierd
 unab wierd
 
-augroup Wierd
-  au!
-  au BufEnter *.w set virtualedit=all
-  au BufLeave *.w set virtualedit=block
-augroup END
+au WinEnter <buffer> set virtualedit=all
+au WinLeave <buffer> set virtualedit=block
