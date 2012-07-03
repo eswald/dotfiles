@@ -38,6 +38,26 @@ nnoremap <silent> `) :EswaldSaveTab<CR>10gt
 " Tab naming
 nnoremap `t :let t:tabname="<C-R>=(exists('t:tabname')? t:tabname : '')<CR>"<Left>
 
+" Moving windows between tabs
+nnoremap <silent> `= :call EswaldMoveNextTab()<CR>
+nnoremap <silent> `- :call EswaldMovePrevTab()<CR>
+function! EswaldMoveNextTab()
+  let buf = bufnr('%')
+  tabnext
+  exec "sbuffer" buf
+  tabprev
+  quit
+  tabnext
+endfunction
+function! EswaldMovePrevTab()
+  let buf = bufnr('%')
+  tabprev
+  exec "sbuffer" buf
+  tabnext
+  quit
+  tabprev
+endfunction
+
 " For use in 'guitablabel'
 function! EswaldGuiTabLabel()
   let label = v:lnum
