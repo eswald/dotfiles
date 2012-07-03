@@ -7,30 +7,33 @@ nnoremap <silent> <C-T> :tabnew<CR>
 nnoremap <silent> <F6> :silent! exec 'tabmove '.(tabpagenr() - 2)<CR>
 nnoremap <silent> <F7> :exec 'tabmove '.tabpagenr()<CR>
 
+" Most recently used tab
+command! EswaldSaveTab exec "nnoremap `<lt>BS> :EswaldSaveTab<CR>".tabpagenr()."gt"
+nnoremap <silent> `<Backspace> :EswaldSaveTab<CR>:tablast<CR>
+
 " Screen-like backticks for navigation
-nnoremap <silent> `n gt
-nnoremap <silent> `p gT
-nnoremap <silent> `1 1gt
-nnoremap <silent> `2 2gt
-nnoremap <silent> `3 3gt
-nnoremap <silent> `4 4gt
-nnoremap <silent> `5 5gt
-nnoremap <silent> `6 6gt
-nnoremap <silent> `7 7gt
-nnoremap <silent> `8 8gt
-nnoremap <silent> `9 9gt
-nnoremap <silent> `0 10gt
-nnoremap <silent> `! 11gt
-nnoremap <silent> `@ 12gt
-nnoremap <silent> `# 13gt
-nnoremap <silent> `$ 14gt
-nnoremap <silent> `% 15gt
-nnoremap <silent> `^ 16gt
-nnoremap <silent> `& 17gt
-nnoremap <silent> `* 18gt
-nnoremap <silent> `( 19gt
-nnoremap <silent> `) 10gt
-nnoremap <silent> `<Backspace> :tablast<CR>
+nnoremap <silent> `n :EswaldSaveTab<CR>gt
+nnoremap <silent> `p :EswaldSaveTab<CR>gT
+nnoremap <silent> `1 :EswaldSaveTab<CR>1gt
+nnoremap <silent> `2 :EswaldSaveTab<CR>2gt
+nnoremap <silent> `3 :EswaldSaveTab<CR>3gt
+nnoremap <silent> `4 :EswaldSaveTab<CR>4gt
+nnoremap <silent> `5 :EswaldSaveTab<CR>5gt
+nnoremap <silent> `6 :EswaldSaveTab<CR>6gt
+nnoremap <silent> `7 :EswaldSaveTab<CR>7gt
+nnoremap <silent> `8 :EswaldSaveTab<CR>8gt
+nnoremap <silent> `9 :EswaldSaveTab<CR>9gt
+nnoremap <silent> `0 :EswaldSaveTab<CR>10gt
+nnoremap <silent> `! :EswaldSaveTab<CR>11gt
+nnoremap <silent> `@ :EswaldSaveTab<CR>12gt
+nnoremap <silent> `# :EswaldSaveTab<CR>13gt
+nnoremap <silent> `$ :EswaldSaveTab<CR>14gt
+nnoremap <silent> `% :EswaldSaveTab<CR>15gt
+nnoremap <silent> `^ :EswaldSaveTab<CR>16gt
+nnoremap <silent> `& :EswaldSaveTab<CR>17gt
+nnoremap <silent> `* :EswaldSaveTab<CR>18gt
+nnoremap <silent> `( :EswaldSaveTab<CR>19gt
+nnoremap <silent> `) :EswaldSaveTab<CR>10gt
 
 " Tab naming
 nnoremap `t :let t:tabname="<C-R>=(exists('t:tabname')? t:tabname : '')<CR>"<Left>
