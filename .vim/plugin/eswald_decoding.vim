@@ -21,8 +21,9 @@ noremap <silent> <Leader>he :call HtmlEncode()<CR>
 noremap <silent> <Leader>hd :call HtmlDecode()<CR>
 
 " Decode URL encodings.
-nnoremap <silent> <Leader>Ud :%s/%\(\x\x\)/\=nr2char('0x'.submatch(1))/ge<CR>
-vnoremap <silent> <Leader>Ud  :s/%\(\x\x\)/\=nr2char('0x'.submatch(1))/ge<CR>
+nnoremap <silent> <Leader>Ud :s/%\(\x\x\)/\=nr2char('0x'.submatch(1))/ge<CR>
+vnoremap <silent> <Leader>Ud :s/%\(\x\x\)/\=nr2char('0x'.submatch(1))/ge<CR>
+nnoremap <silent> <Leader>Ue :s/[^a-zA-Z0-9.-]/\=printf('%%%02x', char2nr(submatch(0)))/ge<CR>
 
 " Decode Quoted-Printable mail
 " VimTip #1012, perhaps by Bertram Scharpf
