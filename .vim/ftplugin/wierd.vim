@@ -1,4 +1,4 @@
-setlocal ve=all ts=1 et sw=1 list nofen
+setlocal ts=1 et sw=1 list nofen
 nnoremap <buffer> <space> r<space>
 vnoremap <buffer> <space> r<space>
 nnoremap <buffer> * r*
