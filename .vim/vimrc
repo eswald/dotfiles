@@ -33,10 +33,6 @@ if version >= 700
   "nnoremap <C-R> g+
 endif
 
-" Remove end-of-line spaces
-nnoremap <Leader>cs :%s/\S\zs\s\+$//<CR>
-vnoremap <Leader>cs :s/\S\zs\s\+$//<CR>
-
 " Allow Ctrl-G to cancel the command line
 cnoremap <C-G> <C-C>
 

@@ -1,3 +1,8 @@
+" Remove end-of-line spaces
+nnoremap <Leader>cs :%s/\S\zs\s\+$//e<CR>
+vnoremap <Leader>cs :s/\S\zs\s\+$//e<CR>
+
+" Clean up evem more stylistic issues.
 function! s:cleanup() range
   execute 'normal! ' . a:firstline . 'ggmg'
   execute 'normal! ' . a:lastline . 'ggmh'
