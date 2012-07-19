@@ -83,7 +83,9 @@ nmap gw :!w3m <C-R><C-A>
 set laststatus=2 ruler
 
 " Display unusual file formats and keymaps on status line
-"set fileformats+=mac
+set fileformats+=unix
+set fileformats+=mac
+set fileformats+=dos
 let g:main_ff = substitute(&fileformats, ',.*', '', '')
 set stl=%<%f\ %h%m%r%{&ff==g:main_ff?'':'['.&ff.']'}%{(&fenc==&enc\|\|&fenc=='')?'':'['.&fenc.']'}%=%k\ %-12.(%l,%c%V%)%P
 
