@@ -25,6 +25,10 @@ iab <buffer> ANS Any number of spaces
 
 let b:delimiter_chars = '",s:\::;,m:{:},(:),[:]'
 
+if exists('*RedateHeader')
+  au BufWritePre <buffer> call RedateHeader('%d-%b-%Y')
+endif
+
 if exists('g:didDvorakPlugin') | finish | endif
 let g:didDvorakPlugin = 1
 
