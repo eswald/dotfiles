@@ -7,6 +7,9 @@ json=.json
 --type-set
 pascal=.pas,.lpr
 
+--type-set
+dvorak=.ddd
+
 --pager=less -R
 
 --ignore-dir
