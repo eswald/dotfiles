@@ -64,7 +64,7 @@ do
       break
     fi
   done
-  params[${#params[*]}]="$rev:$thisdir$param"
+  params+=("$rev:$thisdir$param")
 done
 
 # Pass the real work off to git show
