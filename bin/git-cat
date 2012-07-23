@@ -54,14 +54,20 @@ declare -a params
 for param in "$@"
 do
   thisdir="$dir"
+  original="$param"
   while [ "${param:0:3}" = "../" ]
   do
+    if [ -z "$thisdir" ]
+    then
+      echo "fatal: '$original' is outside repository"
+      exit 128
+    fi
+    
     thisdir="$(dirname "$thisdir")/"
     param="${param#../}"
     if [ "$thisdir" = "./" ]
     then
       thisdir=""
-      break
     fi
   done
   params+=("$rev:$thisdir$param")
