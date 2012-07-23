@@ -50,16 +50,22 @@ fi
 dir="$(git rev-parse --show-prefix)"
 
 # Add the prefix to each parameter
-prefixed() {
-  prefix="$1"
-  shift
-  
-  while [ -n "$1" ]
+declare -a params
+for param in "$@"
+do
+  thisdir="$dir"
+  while [ "${param:0:3}" = "../" ]
   do
-    echo "$prefix$1"
-    shift
+    thisdir="$(dirname "$thisdir")/"
+    param="${param#../}"
+    if [ "$thisdir" = "./" ]
+    then
+      thisdir=""
+      break
+    fi
   done
-}
+  params[${#params[*]}]="$rev:$thisdir$param"
+done
 
 # Pass the real work off to git show
-git show $(prefixed "$rev:$dir" "$@")
+git show "${params[@]}"
