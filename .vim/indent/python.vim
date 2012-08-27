@@ -57,7 +57,7 @@ function! GetPythonIndent(lnum)
   call cursor(plnum, 1)
   let skip = "line('.') < " . (plnum - s:maxoff) . " ? dummy :"
 	  \ . " synIDattr(synID(line('.'), col('.'), 1), 'name')"
-	  \ . " =~ 'python\\(Comment\\|String\\)'"
+	  \ . " =~ 'python\\(Comment\\|String\\|RawString\\)'"
   let plevel = 0
   while searchpair('[{([]', '', '[])}]', 'bW', skip) > 0
     let plevel = plevel + 1
