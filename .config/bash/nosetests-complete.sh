@@ -30,6 +30,9 @@ _nosetests()
   compopt -o nospace
   cur="${COMP_WORDS[COMP_CWORD]}"
   case "$cur" in
+    -*)
+      COMPREPLY=( $(compgen -W "-vx --collect-only" -- "$cur") )
+      return 0;;
     :)
       # Look at the previous COMP_WORD for the file name.
       fname="${COMP_WORDS[COMP_CWORD-1]}"
