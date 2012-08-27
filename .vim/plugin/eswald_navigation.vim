@@ -30,6 +30,12 @@ nnoremap <Delete> 2<C-D>
 " we can use the latter as a new map for the former.
 noremap gj J
 
+" Use Emacs-style readline keys on the command line.
+cnoremap <C-A> <Home>
+cnoremap <C-B> <Left>
+cnoremap <C-F> <Right>
+set cedit=
+
 
 " Use backspace to navigate the jump list.
 nnoremap <BS> <C-O>
