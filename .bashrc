@@ -144,3 +144,10 @@ shopt -s cdspell    # correct minor spelling errors in 'cd' arguments
 shopt -s cmdhist    # save multi-line commands as a single history entry
 # shopt -s dotglob  # include hidden '.' files in filename expansion
 shopt -s extglob    # allows ?(), *(), +(), @(), !() in path expansion
+
+# Safer shell globbing.
+# http://www.dwheeler.com/essays/fixing-unix-linux-filenames.html
+# Ignores hidden files, paths with control characters, and paths beginning with hyphens.
+# If you want a glob to return files beginning with hyphens, use ./* instead of *
+# Doesn't check for proper UTF-8 sequences, though.
+GLOBIGNORE=$(printf '.[!/.]*:..[!/]*:*/.[!/.]*:*/..[!/]*:*[\001-\037\177]*:-*')
