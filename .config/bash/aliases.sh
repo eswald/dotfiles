@@ -35,10 +35,10 @@ else
   alias ipy="python"
 fi
 
-if command -v gnome-open > /dev/null 2>%1
+if command -v gnome-open > /dev/null 2>&1
 then
   alias open="gnome-open"
-elif command -v xdg-open > /dev/null 2>%1
+elif command -v xdg-open > /dev/null 2>&1
 then
   alias open="xdg-open"
 else
@@ -140,7 +140,7 @@ extract () {
 # Let me know when a long-running command has completed.
 # Usage:
 # > sleep 10; alert
-if command -v notify-send > /dev/null 2>%1
+if command -v notify-send > /dev/null 2>&1
 then
   alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 fi
@@ -159,7 +159,7 @@ function repeat {
 
 # Print a sequence of numbers.
 # Needed by `repeat()`, but might already exist.
-if ! command -v seq > /dev/null 2>%1
+if ! command -v seq > /dev/null 2>&1
 then
   function seq {
     local lower upper
