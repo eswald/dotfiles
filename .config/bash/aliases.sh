@@ -1,5 +1,6 @@
 # Bash alias definitions
 alias psh='ps -eHOuser,vsize,pmem | less -S'
+alias psc='ps xawf -eo pid,user,cgroup,args | less -S'
 alias webshare='python -c "import SimpleHTTPServer; SimpleHTTPServer.test();"'
 alias please='sudo $(history 2 | head -n 1 | sed -e "s/^ *[0-9]\+ \+//")'
 alias rsync='rsync --partial --progress'
