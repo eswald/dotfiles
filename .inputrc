@@ -1,0 +1,14 @@
+"\C-w": unix-filename-rubout
+
+# Completed directory names have a slash appended.
+set mark-directories on
+
+# So do symlinks to directories.
+set mark-symlinked-directories on
+
+# Ignore case for completing filenames.
+set completion-ignore-case on
+
+# Let underscore and hyphen match each other, too.
+set completion-map-case on
+
