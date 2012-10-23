@@ -1,4 +1,9 @@
+# Control-w should stop at slashes as well as whitespace.
 "\C-w": unix-filename-rubout
+
+# Avoid stray character sequences.
+"\e[": skip-csi-sequence
+"\M-[": skip-csi-sequence
 
 # Completed directory names have a slash appended.
 set mark-directories on
