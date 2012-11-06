@@ -7,7 +7,7 @@
 	st = status -s
 	ci = commit
 	co = clone
-	glog = log --graph --date-order --decorate --oneline
+	lg = log --graph --date-order --decorate --oneline
 	info = log -1 --oneline
 	list = ls-files
 	ls = !git ls-files \"$@\" | less -FiRSn && :
