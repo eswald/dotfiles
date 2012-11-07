@@ -71,12 +71,30 @@ then
       envcode=""
     fi
     
+    gitdir=.
+    gitcode=""
+    until [ "$gitdir" -ef / ]; do
+      if [ -f "$gitdir/.git/HEAD" ]; then
+	head=$(< "$gitdir/.git/HEAD")
+	gitdir=$(readlink -f "$gitdir")
+	if [[ $head == ref:\ refs/heads/* ]]; then
+	  gitcode=" $blue($gitdir ${head#*/*/})"
+	elif [[ $head != '' ]]; then
+	  gitcode=" $blue($gitdir $head)"
+	else
+	  gitcode=" $blue($gitdir)"
+	fi
+	break
+      fi
+      gitdir="../$gitdir"
+    done
+    
     exitcode="$exitcolor(exit $err)"
     timecode="$blue(\t)"
     jobcode="$jobcolor(\j jobs)"
     usercode="$usercolor(\u@\H$envcode)"
     pathcode="$pathcolor\w"
-    echo "$exitcode $usercode $timecode $jobcode$normal\n$pathcode$cyan>$normal "
+    echo "$exitcode $usercode$gitcode $timecode $jobcode$normal\n$pathcode$cyan>$normal "
   }
   
   PROMPT_COMMAND='PS1="$(eswald_prompt)"'
