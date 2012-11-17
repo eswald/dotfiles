@@ -98,15 +98,17 @@ nnoremap <Esc>[26~ %%%V%
 nnoremap g- yyp^v$r-
 nnoremap g= yyp^v$r=
 
-" See your current changes
-" VimTip #1030, by Thomas Hein
-function! s:DiffWithSaved()
-  diffthis
-  vnew | 0r #
-  diffthis
-  setlocal bt=nofile bh=wipe nobl noswf ro
-endfunction
-com! Diff call s:DiffWithSaved()
+if has('windows')
+  " See your current changes
+  " VimTip #1030, by Thomas Hein
+  function! s:DiffWithSaved()
+    diffthis
+    vnew | 0r #
+    diffthis
+    setlocal bt=nofile bh=wipe nobl noswf ro
+  endfunction
+  com! Diff call s:DiffWithSaved()
+endif
 
 " Translate character sets, either in the current line, on a range, or in a string
 " Note that in this version, unmatched characters in old are deleted
