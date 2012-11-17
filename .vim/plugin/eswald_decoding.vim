@@ -14,6 +14,7 @@ endfunction
 function! HtmlDecode()
   silent s/&lt;/</eg
   silent s/&gt;/>/eg
+  silent s/&quot;/"/eg
   silent s/&amp;/\&/eg
 endfunction
 
