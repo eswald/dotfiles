@@ -14,7 +14,8 @@ endfunction
 function! HtmlDecode()
   silent s/&lt;/</eg
   silent s/&gt;/>/eg
-  silent s/&amp/\&;/eg
+  silent s/&quot;/"/eg
+  silent s/&amp;/\&/eg
 endfunction
 
 noremap <silent> <Leader>he :call HtmlEncode()<CR>

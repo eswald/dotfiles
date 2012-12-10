@@ -1,5 +1,6 @@
 # Bash alias definitions
 alias psh='ps -eHOuser,vsize,pmem | less -S'
+alias psc='ps xawf -eo pid,user,cgroup,args | less -S'
 alias webshare='python -c "import SimpleHTTPServer; SimpleHTTPServer.test();"'
 alias please='sudo $(history 2 | head -n 1 | sed -e "s/^ *[0-9]\+ \+//")'
 alias rsync='rsync --partial --progress'
@@ -35,10 +36,10 @@ else
   alias ipy="python"
 fi
 
-if command -v gnome-open > /dev/null
+if command -v gnome-open > /dev/null 2>&1
 then
   alias open="gnome-open"
-elif command -v xdg-open > /dev/null
+elif command -v xdg-open > /dev/null 2>&1
 then
   alias open="xdg-open"
 else
@@ -114,32 +115,10 @@ function legrep {
   egrep --color=yes "$@" | less -R
 }
 
-extract () {
-  if [ -f "$1" ] ; then
-    case "$1" in
-      *.tar.bz2) tar xvjf "$1" ;;
-      *.tar.gz) tar xvzf "$1" ;;
-      *.bz2) bunzip2 "$1" ;;
-      *.rar) rar x "$1" ;;
-      *.gz) gunzip "$1" ;;
-      *.tar) tar xvf "$1" ;;
-      *.tbz2) tar xvjf "$1" ;;
-      *.tgz) tar xvzf "$1" ;;
-      *.zip) unzip "$1" ;;
-      *.jar) unzip "$1" ;;
-      *.Z) uncompress "$1" ;;
-      *.7z) 7z x "$1" ;;
-      *) echo "Don't know how to extract '$1'" ;;
-    esac
-  else
-    echo "'$1' is not a valid file!"
-  fi
-}
-
 # Let me know when a long-running command has completed.
 # Usage:
 # > sleep 10; alert
-if command -v notify-send > /dev/null
+if command -v notify-send > /dev/null 2>&1
 then
   alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 fi
@@ -158,7 +137,7 @@ function repeat {
 
 # Print a sequence of numbers.
 # Needed by `repeat()`, but might already exist.
-if ! command -v seq > /dev/null
+if ! command -v seq > /dev/null 2>&1
 then
   function seq {
     local lower upper
