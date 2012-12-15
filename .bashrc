@@ -131,11 +131,11 @@ fi
 if [ -z "$SSH_AGENT_PID" ]
 then
   sshagent=$(ps -u eswald -o pid,comm | grep ssh-agent | head -n 1)
-  sshsock=$(ls -ld /tmp/keyring-*/ssh /tmp/ssh-*/agent.* 2>/dev/null | grep eswald | head -n 1)
+  sshsock=$(ls -ld /tmp/keyring-*/ssh {~,}/tmp/ssh-*/agent.* 2>/dev/null | grep eswald | head -n 1)
   if [ -n "$sshagent" -a -n "$sshsock" ]
   then
     export SSH_AGENT_PID="$(echo "$sshagent" | sed 's/^ *\([0-9]\+\) .*/\1/')"
-    export SSH_AUTH_SOCK="$(echo "$sshsock" | sed 's%^.* /tmp/%/tmp/%')"
+    export SSH_AUTH_SOCK="$(echo "$sshsock" | sed 's%^.* /%/%')"
   fi
 fi
 
