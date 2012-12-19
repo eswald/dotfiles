@@ -74,7 +74,8 @@ def ci(params):
         message = []
     gitroot, params, addfiles = readcache(params)
     if addfiles:
-        git["add"][addfiles] & FG
+        with local.cwd(gitroot):
+            git["add"][addfiles] & FG
     git["commit"][message][params] & FG
 
 def run(progname, params):
