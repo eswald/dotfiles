@@ -3,7 +3,7 @@ import json
 import sys
 from hashlib import md5
 from plumbum.cmd import git
-from plumbum import FG, local
+from plumbum import FG, ProcessExecutionError, local
 
 def findroot():
     # Find the git directory and cache filename.
@@ -76,7 +76,10 @@ def ci(params):
     if addfiles:
         with local.cwd(gitroot):
             git["add"][addfiles] & FG
-    git["commit"][message][params] & FG
+    try:
+        git["commit"][message][params] & FG
+    except ProcessExecutionError as err:
+        sys.exit(err.retcode)
 
 def run(progname, params):
     if "git-df" in progname:
