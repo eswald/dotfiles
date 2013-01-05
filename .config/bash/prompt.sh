@@ -89,7 +89,26 @@ then
       gitdir="../$gitdir"
     done
     
-    exitcode="$exitcolor(exit $err)"
+    # Merge history with other shells.
+    # It might be nice to pipe history stright into the python, instead of doing this file dance,
+    # but a) we don't know how many commands to pipe, and b) the history number might interfere.
+    histcode=""
+    history -a
+    if python ~/.config/bash/unique_history.py "$HISTFILE"
+    then
+      # Eternal history
+      # Format: Process ID, user name, time finished, history number, time started, command
+      echo $$ $USER "$(date +%s)" "$(HISTTIMEFORMAT="%s " history 1)" >> ~/.bash_eternal
+      
+      # Indicate the new history entry.
+      histcode=" +"
+    fi
+    
+    # These were attempts to collect commands from other shells, but they don't seem to work.
+    #history -r
+    #history -n
+    
+    exitcode="$exitcolor(exit $err$histcode)"
     timecode="$blue(\t)"
     jobcode="$jobcolor(\j jobs)"
     usercode="$usercolor(\u@\H$envcode)"

@@ -17,12 +17,6 @@ export HISTCONTROL=ignorespace:erasedups
 # Ignore some controlling instructions, too.
 export HISTIGNORE="[ 	]*:&:bg:fg:exit:ls:cd"
 
-# Eternal history
-# PROMPT_COMMAND='echo $$ $USER "$(history 1)" >> ~/.bash_eternal'
-
-# Write history constantly
-# PROMPT_COMMAND='history -a'
-
 # Truly massive history file
 export HISTFILESIZE=65536
 # Not quite so massive history memory
