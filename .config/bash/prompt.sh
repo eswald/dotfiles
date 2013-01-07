@@ -115,7 +115,7 @@ then
     #history -n
     
     exitcode="$exitcolor(exit $err$histcode)"
-    timecode="$blue(\t)"
+    timecode="$blue(\d \t)"
     jobcode="$jobcolor(\j jobs)"
     usercode="$usercolor(\u@\H)"
     pathcode="$pathcolor\w"
