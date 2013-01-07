@@ -20,6 +20,16 @@ then
     # Collect the error code before any commands.
     err=$?
     
+    # These codes can be used if the explicit escape commands aren't portable.
+    # I haven't yet seen such a situation.
+    #bright="\[$(tput bold)\]"
+    #red="\[$(tput setaf 1)\]"
+    #blue="\[$(tput setaf 4)\]"
+    #cyan="\[$(tput setaf 6)\]"
+    #green="\[$(tput setaf 2)\]"
+    #yellow="\[$(tput setaf 3)\]"
+    #normal="\[$(tput sgr0)\]"
+    
     bright="\[\e[1m\]"
     red="\[\e[1;31m\]"
     blue="\[\e[0;34m\]"
