@@ -28,6 +28,10 @@ then
     yellow="\[\e[0;33m\]"
     normal="\[\e[0m\]"
     
+    # Reverse a few modes that may have been accidentally invoked.
+    # Sadly, we can't reverse curses tty manipulation.
+    reset="\[$(tput cnorm)$(tput rmacs)$(tput ed)\]$normal"
+    
     if [ "$err" = "0" ]
     then
       # No error: Dark blue
@@ -113,7 +117,7 @@ then
     jobcode="$jobcolor(\j jobs)"
     usercode="$usercolor(\u@\H$envcode)"
     pathcode="$pathcolor\w"
-    echo "$exitcode $usercode$gitcode $timecode $jobcode$normal\n$pathcode$cyan>$normal "
+    echo "$reset$exitcode $usercode$gitcode $timecode $jobcode$normal\n$pathcode$cyan>$normal "
   }
   
   PROMPT_COMMAND='PS1="$(eswald_prompt)"'
@@ -121,6 +125,6 @@ else
   PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
 
-unset color_prompt force_color_prompt
+unset color_prompt
 
 #USER_PROMPT_COMMAND="PS1='$PS1'"
