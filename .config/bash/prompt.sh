@@ -85,23 +85,14 @@ then
       envcode=""
     fi
     
-    gitdir=.
-    gitcode=""
-    until [ "$gitdir" -ef / ]; do
-      if [ -f "$gitdir/.git/HEAD" ]; then
-	head=$(< "$gitdir/.git/HEAD")
-	gitdir=$(readlink -f "$gitdir")
-	if [[ $head == ref:\ refs/heads/* ]]; then
-	  gitcode=" $blue($gitdir ${head#*/*/})"
-	elif [[ $head != '' ]]; then
-	  gitcode=" $blue($gitdir $head)"
-	else
-	  gitcode=" $blue($gitdir)"
-	fi
-	break
-      fi
-      gitdir="../$gitdir"
-    done
+    # Uses __git_ps1 from git's default bash completion script.
+    # See /etc/bash_completion.d/git for details.
+    if command -v __git_ps1 > /dev/null 2>&1
+    then
+      gitcode="$(GIT_PS1_SHOWDIRTYSTATE=1 __git_ps1 " $blue(git: %s)")"
+    else
+      gitcode=""
+    fi
     
     # Merge history with other shells.
     # It might be nice to pipe history stright into the python, instead of doing this file dance,
