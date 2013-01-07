@@ -78,9 +78,10 @@ then
       usercolor="$green"
     fi
     
+    # Python virtual environment
     if [ -n "$VIRTUAL_ENV" ]
     then
-      envcode="/$bright$(basename "$VIRTUAL_ENV")$usercolor"
+      envcode=" $blue(python: $(basename "$VIRTUAL_ENV"))"
     else
       envcode=""
     fi
@@ -116,9 +117,9 @@ then
     exitcode="$exitcolor(exit $err$histcode)"
     timecode="$blue(\t)"
     jobcode="$jobcolor(\j jobs)"
-    usercode="$usercolor(\u@\H$envcode)"
+    usercode="$usercolor(\u@\H)"
     pathcode="$pathcolor\w"
-    echo "$reset$exitcode $usercode$gitcode $timecode $jobcode$normal\n$pathcode$cyan>$normal "
+    echo "$reset$exitcode $usercode$envcode$gitcode $timecode $jobcode$normal\n$pathcode$cyan>$normal "
   }
   
   PROMPT_COMMAND='PS1="$(eswald_prompt)"'
