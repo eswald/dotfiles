@@ -2,22 +2,32 @@
 import sys
 from eswald.gittools import readcache
 from plumbum.cmd import git
+from plumbum.cli import Application, SwitchAttr
 from plumbum import FG, ProcessExecutionError, local
 
-def ci(params):
-    if params and params[0] == "-m":
-        message = params[:2]
-        params = params[2:]
-    else:
-        message = []
-    gitroot, params, addfiles = readcache(params)
-    if addfiles:
-        with local.cwd(gitroot):
-            git["add"][addfiles] & FG
-    try:
-        git["commit"][message][params] & FG
-    except ProcessExecutionError as err:
-        sys.exit(err.retcode)
+class GitCi(Application):
+    message = SwitchAttr(
+        ["-m", "--message"],
+        str,
+        default = None,
+        argname = "MESSAGE",
+    )
+    
+    def main(self, *files):
+        if self.message:
+            message = ["-m", self.message]
+        else:
+            message = []
+        
+        gitroot, params, addfiles = readcache(files)
+        if addfiles:
+            with local.cwd(gitroot):
+                git["add"][addfiles] & FG
+        
+        try:
+            git["commit"][message][params] & FG
+        except ProcessExecutionError as err:
+            sys.exit(err.retcode)
 
 if __name__ == "__main__":
-    ci(sys.argv[1:])
+    GitCi.run()
