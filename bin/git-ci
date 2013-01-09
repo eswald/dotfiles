@@ -1,1 +1,23 @@
-git-df
+#!/usr/bin/env python
+import sys
+from eswald.gittools import readcache
+from plumbum.cmd import git
+from plumbum import FG, ProcessExecutionError, local
+
+def ci(params):
+    if params and params[0] == "-m":
+        message = params[:2]
+        params = params[2:]
+    else:
+        message = []
+    gitroot, params, addfiles = readcache(params)
+    if addfiles:
+        with local.cwd(gitroot):
+            git["add"][addfiles] & FG
+    try:
+        git["commit"][message][params] & FG
+    except ProcessExecutionError as err:
+        sys.exit(err.retcode)
+
+if __name__ == "__main__":
+    ci(sys.argv[1:])

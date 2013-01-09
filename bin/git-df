@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import json
 import sys
-from eswald.gittools import findroot, digests, readcache
+from eswald.gittools import findroot, digests
 from plumbum.cmd import git
-from plumbum import FG, ProcessExecutionError, local
+from plumbum import FG
 
 def df(params):
     # Store checksums of the changed files for use by git-ci.
@@ -16,29 +16,5 @@ def df(params):
     # Run the diff command
     git["diff"][params] & FG
 
-def ci(params):
-    if params and params[0] == "-m":
-        message = params[:2]
-        params = params[2:]
-    else:
-        message = []
-    gitroot, params, addfiles = readcache(params)
-    if addfiles:
-        with local.cwd(gitroot):
-            git["add"][addfiles] & FG
-    try:
-        git["commit"][message][params] & FG
-    except ProcessExecutionError as err:
-        sys.exit(err.retcode)
-
-def run(progname, params):
-    if "git-df" in progname:
-        df(params)
-    elif "git-ci" in progname:
-        ci(params)
-    else:
-        print "fatal: unknown program alias"
-        sys.exit(1)
-
 if __name__ == "__main__":
-    run(sys.argv[0], sys.argv[1:])
+    df(sys.argv[1:])
