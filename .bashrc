@@ -101,8 +101,20 @@ fi
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
-if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+if ! shopt -oq posix
+then
+  if [ -f /etc/bash_completion ]
+  then
     . /etc/bash_completion
+  elif [ -d /etc/bash_completion.d ]
+  then
+    # Missing the main bash completion file,
+    # but we can at least use any available.
+    for file in /etc/bash_completion.d/*
+    do
+      . "$file"
+    done
+  fi
 fi
 
 # Source any custom completion files.
