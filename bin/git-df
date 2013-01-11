@@ -3,14 +3,18 @@ import json
 import sys
 from eswald.gittools import findroot, digests
 from plumbum.cmd import git
-from plumbum import FG
+from plumbum import FG, local
 
 def df(params):
+    # Filter flags out of the parameter list.
+    cwd = local.cwd
+    paths = [arg for arg in params if (cwd/arg).exists()]
+    
     # Store checksums of the changed files for use by git-ci.
     gitroot, cachefile = findroot()
     json.dump({
-        "params": params,
-        "digests": digests(gitroot, params),
+        "params": paths,
+        "digests": digests(gitroot, paths),
     }, open(str(cachefile), "w"))
     
     # Run the diff command
