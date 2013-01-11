@@ -3,7 +3,7 @@ import json
 import sys
 from eswald.gittools import findroot, digests
 from plumbum.cmd import git
-from plumbum import FG, local
+from plumbum import FG, ProcessExecutionError, local
 
 def df(params):
     # Filter flags out of the parameter list.
@@ -18,7 +18,10 @@ def df(params):
     }, open(str(cachefile), "w"))
     
     # Run the diff command
-    git["diff"][params] & FG
+    try:
+        git["diff"][params] & FG
+    except ProcessExecutionError as err:
+        sys.exit(err.retcode)
 
 if __name__ == "__main__":
     df(sys.argv[1:])

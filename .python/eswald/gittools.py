@@ -6,7 +6,7 @@ import json
 import sys
 from hashlib import md5
 from plumbum.cmd import git
-from plumbum import local
+from plumbum import ProcessExecutionError, local
 
 def findroot():
     # Find the git directory and cache filename.
@@ -22,7 +22,13 @@ def findroot():
     return gitroot, gitdir/"info/df-digest"
 
 def digests(gitroot, params):
-    status = git["status", "--porcelain", "-uno"][params]()
+    try:
+        status = git["status", "--porcelain", "-uno"][params]()
+    except ProcessExecutionError:
+        # Ignore errors at this stage.
+        # Just tell git ci not to add anything.
+        return {}
+    
     with local.cwd(gitroot):
         checksums = {}
         for line in status.splitlines():
