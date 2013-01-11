@@ -28,7 +28,7 @@ class GitCi(Application):
         gitroot, params, addfiles = readcache(paths)
         if addfiles:
             with local.cwd(gitroot):
-                git["add"][addfiles] & FG
+                git["add", "-f"][addfiles] & FG
         
         try:
             git["commit"][message][params] & FG
