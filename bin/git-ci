@@ -6,20 +6,26 @@ from plumbum.cli import Application, SwitchAttr
 from plumbum import FG, ProcessExecutionError, local
 
 class GitCi(Application):
+    r'''Commits indexed changes to the git repository.
+        Under limited circumstances, first adds changes cached by `git df` to the index.
+    '''#"""#'''
+    
+    VERSION = "0.7"
+    
     message = SwitchAttr(
         ["-m", "--message"],
-        str,
         default = None,
-        argname = "MESSAGE",
+        argname = "<MSG>",
+        help = "Use the given <MSG> as the commit message",
     )
     
-    def main(self, *files):
+    def main(self, *paths):
         if self.message:
             message = ["-m", self.message]
         else:
             message = []
         
-        gitroot, params, addfiles = readcache(files)
+        gitroot, params, addfiles = readcache(paths)
         if addfiles:
             with local.cwd(gitroot):
                 git["add"][addfiles] & FG
