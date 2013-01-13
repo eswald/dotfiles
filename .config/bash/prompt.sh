@@ -20,6 +20,16 @@ then
     # Collect the error code before any commands.
     err=$?
     
+    # These codes can be used if the explicit escape commands aren't portable.
+    # I haven't yet seen such a situation.
+    #bright="\[$(tput bold)\]"
+    #red="\[$(tput setaf 1)\]"
+    #blue="\[$(tput setaf 4)\]"
+    #cyan="\[$(tput setaf 6)\]"
+    #green="\[$(tput setaf 2)\]"
+    #yellow="\[$(tput setaf 3)\]"
+    #normal="\[$(tput sgr0)\]"
+    
     bright="\[\e[1m\]"
     red="\[\e[1;31m\]"
     blue="\[\e[0;34m\]"
@@ -27,6 +37,10 @@ then
     green="\[\e[0;32m\]"
     yellow="\[\e[0;33m\]"
     normal="\[\e[0m\]"
+    
+    # Reverse a few modes that may have been accidentally invoked.
+    # Sadly, we can't reverse curses tty manipulation.
+    reset="\[$(tput cnorm)$(tput rmacs)$(tput ed)\]$normal"
     
     if [ "$err" = "0" ]
     then
@@ -64,37 +78,48 @@ then
       usercolor="$green"
     fi
     
+    # Python virtual environment
     if [ -n "$VIRTUAL_ENV" ]
     then
-      envcode="/$bright$(basename "$VIRTUAL_ENV")$usercolor"
+      envcode=" $blue(python: $(basename "$VIRTUAL_ENV"))"
     else
       envcode=""
     fi
     
-    gitdir=.
-    gitcode=""
-    until [ "$gitdir" -ef / ]; do
-      if [ -f "$gitdir/.git/HEAD" ]; then
-	head=$(< "$gitdir/.git/HEAD")
-	gitdir=$(readlink -f "$gitdir")
-	if [[ $head == ref:\ refs/heads/* ]]; then
-	  gitcode=" $blue($gitdir ${head#*/*/})"
-	elif [[ $head != '' ]]; then
-	  gitcode=" $blue($gitdir $head)"
-	else
-	  gitcode=" $blue($gitdir)"
-	fi
-	break
-      fi
-      gitdir="../$gitdir"
-    done
+    # Uses __git_ps1 from git's default bash completion script.
+    # See /etc/bash_completion.d/git for details.
+    if command -v __git_ps1 > /dev/null 2>&1
+    then
+      gitcode="$(GIT_PS1_SHOWDIRTYSTATE=1 __git_ps1 " $blue(git: %s)")"
+    else
+      gitcode=""
+    fi
     
-    exitcode="$exitcolor(exit $err)"
-    timecode="$blue(\t)"
+    # Merge history with other shells.
+    # It might be nice to pipe history stright into the python, instead of doing this file dance,
+    # but a) we don't know how many commands to pipe, and b) the history number might interfere.
+    histcode=""
+    history -a
+    if python ~/.config/bash/unique_history.py "$HISTFILE"
+    then
+      # Eternal history
+      # Format: Process ID, user name, time finished, history number, time started, command
+      echo $$ $USER "$(date +%s)" "$(HISTTIMEFORMAT="%s " history 1)" >> ~/.bash_eternal
+      
+      # Indicate the new history entry.
+      histcode=" +"
+    fi
+    
+    # These were attempts to collect commands from other shells, but they don't seem to work.
+    #history -r
+    #history -n
+    
+    exitcode="$exitcolor(exit $err$histcode)"
+    timecode="$blue(\d \t)"
     jobcode="$jobcolor(\j jobs)"
-    usercode="$usercolor(\u@\H$envcode)"
+    usercode="$usercolor(\u@\H)"
     pathcode="$pathcolor\w"
-    echo "$exitcode $usercode$gitcode $timecode $jobcode$normal\n$pathcode$cyan>$normal "
+    echo "$reset$exitcode $usercode$envcode$gitcode $timecode $jobcode$normal\n$pathcode$cyan>$normal "
   }
   
   PROMPT_COMMAND='PS1="$(eswald_prompt)"'
@@ -102,6 +127,6 @@ else
   PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
 
-unset color_prompt force_color_prompt
+unset color_prompt
 
 #USER_PROMPT_COMMAND="PS1='$PS1'"

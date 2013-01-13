@@ -17,12 +17,6 @@ export HISTCONTROL=ignorespace:erasedups
 # Ignore some controlling instructions, too.
 export HISTIGNORE="[ 	]*:&:bg:fg:exit:ls:cd"
 
-# Eternal history
-# PROMPT_COMMAND='echo $$ $USER "$(history 1)" >> ~/.bash_eternal'
-
-# Write history constantly
-# PROMPT_COMMAND='history -a'
-
 # Truly massive history file
 export HISTFILESIZE=65536
 # Not quite so massive history memory
@@ -107,8 +101,20 @@ fi
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
-if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+if ! shopt -oq posix
+then
+  if [ -f /etc/bash_completion ]
+  then
     . /etc/bash_completion
+  elif [ -d /etc/bash_completion.d ]
+  then
+    # Missing the main bash completion file,
+    # but we can at least use any available.
+    for file in /etc/bash_completion.d/*
+    do
+      . "$file"
+    done
+  fi
 fi
 
 # Source any custom completion files.
@@ -131,11 +137,11 @@ fi
 if [ -z "$SSH_AGENT_PID" ]
 then
   sshagent=$(ps -u eswald -o pid,comm | grep ssh-agent | head -n 1)
-  sshsock=$(ls -ld /tmp/keyring-*/ssh /tmp/ssh-*/agent.* 2>/dev/null | grep eswald | head -n 1)
+  sshsock=$(ls -ld /tmp/keyring-*/ssh {~,}/tmp/ssh-*/agent.* 2>/dev/null | grep eswald | head -n 1)
   if [ -n "$sshagent" -a -n "$sshsock" ]
   then
     export SSH_AGENT_PID="$(echo "$sshagent" | sed 's/^ *\([0-9]\+\) .*/\1/')"
-    export SSH_AUTH_SOCK="$(echo "$sshsock" | sed 's%^.* /tmp/%/tmp/%')"
+    export SSH_AUTH_SOCK="$(echo "$sshsock" | sed 's%^.* /%/%')"
   fi
 fi
 

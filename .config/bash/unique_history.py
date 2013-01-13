@@ -1,0 +1,78 @@
+#!/usr/bin/python
+# Original by Jean-Louis Fuchs:
+# http://ganwellresource.blogspot.com/2012/09/bash-history-of-unique-commands.html
+
+import os
+import fcntl
+import shutil
+import sys
+
+def run(args):
+    if args:
+        bash_file = args.pop(0)
+    else:
+        # Todo: Check the environment for HISTFILE
+        bash_file = os.path.expanduser('~/.bash_history')
+    
+    if args:
+        eternal = args.pop(0)
+    else:
+        eternal = os.path.expanduser('~/.config/bash/history')
+    
+    try:
+        return mergelines(eternal, bash_file)
+    except Exception as err:
+        print err
+        return 1
+
+def mergelines(eternal, bash_file):
+    # Read the collected unique history lines.
+    try:
+        f = open(eternal, 'r')
+        lines = list(f.readlines())
+        f.close()
+    except IOError:
+        # No such file
+        lines = []
+    
+    myset = set(lines)
+    
+    # Append the current bash history file.
+    f = open(bash_file, 'r')
+    lines.extend(f.readlines())
+    f.close()
+    
+    # Check for new lines.
+    lineset = set(lines)
+    diff = lineset - myset
+    if len(diff) == 0:
+        # No new lines to worry about.
+        # We could re-arrange the history file, but it's not worthwhile.
+        return 42
+    
+    # Collect the unique lines in historical order.
+    # Append and reverse appears to be faster than prepending.
+    newlist = []
+    lines.reverse()
+    for line in lines:
+        if line in lineset:
+            newlist.append(line)
+            lineset.remove(line)
+    newlist.reverse()
+    
+    # Write the history lines back out.
+    # Use a file lock to avoid corruption on script contention.
+    f = open(eternal, 'w')
+    fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+    f.writelines(newlist)
+    fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+    f.close()
+    
+    # Replace the bash history file
+    shutil.copyfile(eternal, bash_file)
+    
+    # Return success to indicate a new history line.
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(run(sys.argv[1:]))

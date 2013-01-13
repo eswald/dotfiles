@@ -1,0 +1,17 @@
+#!/usr/bin/perl
+# Displays each parameter on a separate line.
+# Translates certain special characters to highlighted escape sequences.
+
+$eol = `tput setaf 4`;
+$special = `tput setaf 5`;
+$normal = `tput setaf 9`;
+
+foreach (@ARGV) {
+	# Escape must be first, to avoid escaping the color sequences.
+	s/\e/$special\\e$normal/mg;
+	s/\n/$special\\n$normal/mg;
+	s/\r/$special\\r$normal/mg;
+	s/\t/$special\\t$normal/mg;
+	s/$/$eol\$$normal\n/;
+	print;
+}
