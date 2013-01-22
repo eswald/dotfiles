@@ -7,7 +7,7 @@ then
 elif command -v gitg > /dev/null
 then
   gitg "$@" 2> /dev/null &
-elif command -v gitk > /dev/null
+elif command -v gitk > /dev/null && command -v wish > /dev/null
 then
   gitk --branches --date-order "$@" &
 else
