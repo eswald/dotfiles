@@ -36,11 +36,13 @@ then
     cyan="\[\e[0;36m\]"
     green="\[\e[0;32m\]"
     yellow="\[\e[0;33m\]"
-    normal="\[\e[0m\]"
+    normal="\[\e[m\]"
     
     # Reverse a few modes that may have been accidentally invoked.
     # Sadly, we can't reverse curses tty manipulation.
-    reset="\[$(tput cnorm)$(tput rmacs)$(tput ed)\]$normal"
+    # See http://invisible-island.net/xterm/ctlseqs/ctlseqs.html for more potential codes.
+    # These come from tput cnorm, rmacs, and ed.
+    reset="\[\e[34h\e[?25h\017\e[J\e[m\]"
     
     if [ "$err" = "0" ]
     then
