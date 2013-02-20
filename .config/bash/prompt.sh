@@ -81,7 +81,12 @@ then
     # Python virtual environment
     if [ -n "$VIRTUAL_ENV" ]
     then
-      envcode=" $blue(python: $(basename "$VIRTUAL_ENV"))"
+      virt="$(basename "$VIRTUAL_ENV")"
+      if [ "$virt" = "sandbox" ]
+      then
+	virt="$(basename $(dirname "$VIRTUAL_ENV"))/sandbox"
+      fi
+      envcode=" $blue(python: $virt)"
     else
       envcode=""
     fi
