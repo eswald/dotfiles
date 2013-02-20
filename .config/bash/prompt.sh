@@ -96,7 +96,7 @@ then
     # See /etc/bash_completion.d/git for details.
     if command -v __git_ps1 > /dev/null 2>&1
     then
-      gitcode="$(GIT_PS1_SHOWDIRTYSTATE=1 __git_ps1 " $blue(git: %s)")"
+      gitcode="$(__git_ps1 " $blue(git: %s)")"
     else
       gitcode=""
     fi
