@@ -17,7 +17,7 @@ def run(args):
     if args:
         eternal = args.pop(0)
     else:
-        eternal = os.path.expanduser('~/.config/bash/history')
+        eternal = os.path.expanduser('~/.cache/bash_history')
     
     try:
         return mergelines(eternal, bash_file)
