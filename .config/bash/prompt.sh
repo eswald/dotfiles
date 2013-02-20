@@ -106,7 +106,7 @@ then
     # but a) we don't know how many commands to pipe, and b) the history number might interfere.
     histcode=""
     history -a
-    if python ~/.config/bash/unique_history.py "$HISTFILE" > /dev/null 2>&1
+    if python ~/.python/eswald/unique_history.py "$HISTFILE" > /dev/null 2>&1
     then
       # Eternal history
       # Format: Process ID, user name, time finished, history number, time started, command
