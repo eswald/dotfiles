@@ -123,6 +123,8 @@ fi
 # Source any custom completion files.
 if [ -d ~/.config/bash ]
 then
+  # The GLOBIGNORE set below can interfere with this glob.
+  GLOBIGNORE=
   for file in ~/.config/bash/*.sh
   do
     . $file
