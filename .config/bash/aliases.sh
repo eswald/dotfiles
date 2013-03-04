@@ -11,6 +11,15 @@ alias df='df -Th'
 # Find a decent pager
 if command -v less > /dev/null 2>&1
 then
+  if [ -z "${WINDOW:-}" ]
+  then
+    # Not in a screen/tmux session, so less might unfortunately use the alternate screen.
+    # That makes -F unusable, because it tends to disappear.
+    export LESS=-iRnS
+  else
+    export LESS=-FiRnS
+  fi
+  
   export PAGER="less $LESS"
 elif command -v more > /dev/null 2>&1
 then
