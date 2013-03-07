@@ -9,7 +9,7 @@ alias s='cd ..'
 alias df='df -Th'
 
 # Find a decent editor
-if command -v vim
+if command -v vim > /dev/null 2>&1
 then
   export EDITOR="vim"
 fi
