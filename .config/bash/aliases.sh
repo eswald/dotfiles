@@ -6,6 +6,12 @@ alias cd..='cd ..'
 alias s='cd ..'
 alias df='df -Th'
 
+# Find a decent editor
+if command -v vim > /dev/null 2>&1
+then
+  export EDITOR="vim"
+fi
+
 # Find a decent pager
 if command -v less > /dev/null 2>&1
 then
