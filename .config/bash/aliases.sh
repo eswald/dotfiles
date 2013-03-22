@@ -15,13 +15,14 @@ fi
 # Find a decent pager
 if command -v less > /dev/null 2>&1
 then
-  if [ -z "${WINDOW:-}" ]
+  if [ "${TERM//.*}" = "screen" ]
   then
+    # Allow less to disappear when it can display everything on a single screen.
+    export LESS=-FiRnS
+  else
     # Not in a screen/tmux session, so less might unfortunately use the alternate screen.
     # That makes -F unusable, because it tends to disappear.
     export LESS=-iRnS
-  else
-    export LESS=-FiRnS
   fi
   
   export PAGER="less $LESS"
