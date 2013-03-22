@@ -123,7 +123,7 @@ fi
 if [ -d ~/.config/bash ]
 then
   # The GLOBIGNORE set below can interfere with this glob.
-  GLOBIGNORE=
+  unset GLOBIGNORE
   for file in ~/.config/bash/*.sh
   do
     . $file
@@ -160,4 +160,4 @@ shopt -s extglob    # allows ?(), *(), +(), @(), !() in path expansion
 # Ignores hidden files, paths with control characters, and paths beginning with hyphens.
 # If you want a glob to return files beginning with hyphens, use ./* instead of *
 # Doesn't check for proper UTF-8 sequences, though.
-GLOBIGNORE=$(printf '.[!/.]*:..[!/]*:*/.[!/.]*:*/..[!/]*:*[\001-\037\177]*:-*')
+#GLOBIGNORE=$(printf '.[!/.]*:..[!/]*:*/.[!/.]*:*/..[!/]*:*[\001-\037\177]*:-*')
