@@ -101,13 +101,14 @@ then
     until [ "$gitdir" -ef / ]; do
       if [ -f "$gitdir/.git/HEAD" ]; then
 	head=$(< "$gitdir/.git/HEAD")
-	gitdir=$(readlink -f "$gitdir")
+	gitdir="$(readlink -f "$gitdir")"
+	gitlabel="git:${gitdir##/*/}"
 	if [[ $head == ref:\ refs/heads/* ]]; then
-	  gitcode=" $blue(git:$gitdir ${head#*/*/})"
+	  gitcode=" $blue($gitlabel ${head#*/*/})"
 	elif [[ $head != '' ]]; then
-	  gitcode=" $blue(git:$gitdir $head)"
+	  gitcode=" $blue($gitlabel $head)"
 	else
-	  gitcode=" $blue(git:$gitdir)"
+	  gitcode=" $blue($gitlabel)"
 	fi
 	break
       fi
