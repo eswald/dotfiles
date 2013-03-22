@@ -103,11 +103,11 @@ then
 	head=$(< "$gitdir/.git/HEAD")
 	gitdir=$(readlink -f "$gitdir")
 	if [[ $head == ref:\ refs/heads/* ]]; then
-	  gitcode=" $blue($gitdir ${head#*/*/})"
+	  gitcode=" $blue(git:$gitdir ${head#*/*/})"
 	elif [[ $head != '' ]]; then
-	  gitcode=" $blue($gitdir $head)"
+	  gitcode=" $blue(git:$gitdir $head)"
 	else
-	  gitcode=" $blue($gitdir)"
+	  gitcode=" $blue(git:$gitdir)"
 	fi
 	break
       fi
