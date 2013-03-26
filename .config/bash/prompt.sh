@@ -16,6 +16,11 @@ fi
 
 if [ "$color_prompt" = yes ]
 then
+  if command -v stty > /dev/null 2>&1
+  then
+    export STTY_ORIG="$(stty -g)"
+  fi
+  
   function eswald_prompt {
     # Collect the error code before any commands.
     err=$?
@@ -39,10 +44,15 @@ then
     normal="\[\e[m\]"
     
     # Reverse a few modes that may have been accidentally invoked.
-    # Sadly, we can't reverse curses tty manipulation.
     # See http://invisible-island.net/xterm/ctlseqs/ctlseqs.html for more potential codes.
     # These come from tput cnorm, rmacs, and ed.
     reset="\[\e[34h\e[?25h\017\e[J\e[m\]"
+    
+    # Reverse curses tty manipulation.
+    if [ -n "${STTY_ORIG:-}" ]
+    then
+      stty "$STTY_ORIG"
+    fi
     
     if [ "$err" = "0" ]
     then
