@@ -1,0 +1,32 @@
+#!/usr/bin/python
+import fileinput
+
+from plumbum.cli import Application, SwitchAttr
+from sys import stdout
+from time import sleep
+
+class SlowCat(Application):
+    r'''Concatenate files or input, pausing after each line.
+    '''#"""#'''
+    
+    VERSION = "0.1"
+    
+    delay = SwitchAttr(
+        ["-d", "--delay"],
+        default = 0.2,
+        argtype = float,
+        argname = "SECONDS",
+        help = "Delay, in seconds",
+    )
+    
+    def main(self, *files):
+        for line in fileinput.input(files):
+            try:
+                stdout.write(line)
+                sleep(self.delay)
+            except (KeyboardInterrupt, IOError):
+                return 1
+        return 0
+
+if __name__ == "__main__":
+    SlowCat.run()
