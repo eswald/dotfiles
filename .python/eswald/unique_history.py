@@ -17,7 +17,7 @@ def run(args):
     if args:
         eternal = args.pop(0)
     else:
-        eternal = os.path.expanduser('~/.config/bash/history')
+        eternal = os.path.expanduser('~/.cache/bash_history')
     
     try:
         return mergelines(eternal, bash_file)
@@ -71,6 +71,12 @@ def mergelines(eternal, bash_file):
     
     # Replace the bash history file
     shutil.copyfile(eternal, bash_file)
+    
+    if not myset:
+        # The history file was created from scratch.
+        # This shell probably hasn't run any commands yet,
+        # so don't indicate a new history line.
+        return 65
     
     # Return success to indicate a new history line.
     return 0

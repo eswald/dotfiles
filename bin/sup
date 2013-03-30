@@ -46,7 +46,14 @@ printf "  Working dir:\t"$CPWD"\n"
 printf "  Home dir:\t"$HOME"\n"
 printf "\n<=== NETWORK ===>\n"
 printf "  Hostname:\t"$HOSTNAME"\n"
-ip -o addr | awk '/inet /{print "  IP (" $2 "):\t" $4}'
+if [ -x /sbin/ip ]
+then
+  ip=/sbin/ip
+elif command -v ip > /dev/null 2>&1
+then
+  ip=ip
+fi
+$ip -o addr | awk '/inet /{print "  IP (" $2 "):\t" $4}'
 /sbin/route -n | awk '/^0.0.0.0/{ printf "  Gateway:\t"$2"\n" }'
 cat /etc/resolv.conf | awk '/^nameserver/{ printf "  Name Server:\t" $2 "\n"}'
 #lspci | grep "Audio device:\|VGA compatible" | awk '

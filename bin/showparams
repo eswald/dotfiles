@@ -12,6 +12,8 @@ foreach (@ARGV) {
 	s/\n/$special\\n$normal/mg;
 	s/\r/$special\\r$normal/mg;
 	s/\t/$special\\t$normal/mg;
+	s/([\x01-\x1A])/"$special^".chr(0x40|ord($1))."$normal"/mge;
+	s/([\x00\x1C-\x1F\x7F-\xFF])/"$special\\x".sprintf("%02X",ord($1))."$normal"/mge;
 	s/$/$eol\$$normal\n/;
 	print;
 }

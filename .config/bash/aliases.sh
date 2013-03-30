@@ -1,6 +1,4 @@
 # Bash alias definitions
-alias psh='ps -eHOuser,vsize,pmem | less -S'
-alias psc='ps xawf -eo pid,user,cgroup,args | less -S'
 alias webshare='python -c "import SimpleHTTPServer; SimpleHTTPServer.test();"'
 alias please='sudo $(history 2 | head -n 1 | sed -e "s/^ *[0-9]\+ \+//")'
 alias rsync='rsync --partial --progress'
@@ -8,9 +6,25 @@ alias cd..='cd ..'
 alias s='cd ..'
 alias df='df -Th'
 
+# Find a decent editor
+if command -v vim > /dev/null 2>&1
+then
+  export EDITOR="vim"
+fi
+
 # Find a decent pager
 if command -v less > /dev/null 2>&1
 then
+  if [ "${TERM//.*}" = "screen" ]
+  then
+    # Allow less to disappear when it can display everything on a single screen.
+    export LESS=-FiRnS
+  else
+    # Not in a screen/tmux session, so less might unfortunately use the alternate screen.
+    # That makes -F unusable, because it tends to disappear.
+    export LESS=-iRnS
+  fi
+  
   export PAGER="less $LESS"
 elif command -v more > /dev/null 2>&1
 then
@@ -18,6 +32,10 @@ then
 else
   PAGER="cat"
 fi
+
+# Auto-paging aliases
+alias psh="ps -eHOuser,vsize,pmem | $PAGER"
+alias psc="ps xawf -eo pid,user,cgroup,args | $PAGER"
 
 # Colorize and page tree output, by default.
 if [ -x /usr/bin/tree ]

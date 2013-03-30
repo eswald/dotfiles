@@ -16,6 +16,11 @@ fi
 
 if [ "$color_prompt" = yes ]
 then
+  if command -v stty > /dev/null 2>&1
+  then
+    export STTY_ORIG="$(stty -g)"
+  fi
+  
   function eswald_prompt {
     # Collect the error code before any commands.
     err=$?
@@ -36,11 +41,18 @@ then
     cyan="\[\e[0;36m\]"
     green="\[\e[0;32m\]"
     yellow="\[\e[0;33m\]"
-    normal="\[\e[0m\]"
+    normal="\[\e[m\]"
     
     # Reverse a few modes that may have been accidentally invoked.
-    # Sadly, we can't reverse curses tty manipulation.
-    reset="\[$(tput cnorm)$(tput rmacs)$(tput ed)\]$normal"
+    # See http://invisible-island.net/xterm/ctlseqs/ctlseqs.html for more potential codes.
+    # These come from tput cnorm, rmacs, and ed.
+    reset="\[\e[34h\e[?25h\017\e[J\e[m\]"
+    
+    # Reverse curses tty manipulation.
+    if [ -n "${STTY_ORIG:-}" ]
+    then
+      stty "$STTY_ORIG"
+    fi
     
     if [ "$err" = "0" ]
     then
@@ -81,26 +93,44 @@ then
     # Python virtual environment
     if [ -n "$VIRTUAL_ENV" ]
     then
-      envcode=" $blue(python: $(basename "$VIRTUAL_ENV"))"
+      virt="${VIRTUAL_ENV##*/}"
+      if [ "$virt" = "sandbox" ]
+      then
+	virt="${VIRTUAL_ENV%/*}"
+	virt="${virt##*/}/"
+      fi
+      envcode=" $blue(python: $virt)"
     else
       envcode=""
     fi
     
-    # Uses __git_ps1 from git's default bash completion script.
-    # See /etc/bash_completion.d/git for details.
-    if command -v __git_ps1 > /dev/null 2>&1
-    then
-      gitcode="$(GIT_PS1_SHOWDIRTYSTATE=1 __git_ps1 " $blue(git: %s)")"
-    else
-      gitcode=""
-    fi
+    # Find the git directory and branch, if any.
+    # __git_ps1 proved to be far too slow in some situations.
+    gitdir=.
+    gitcode=""
+    until [ "$gitdir" -ef / ]; do
+      if [ -f "$gitdir/.git/HEAD" ]; then
+	head=$(< "$gitdir/.git/HEAD")
+	gitdir="$(readlink -f "$gitdir")"
+	gitlabel="git:${gitdir##/*/}"
+	if [[ $head == ref:\ refs/heads/* ]]; then
+	  gitcode=" $blue($gitlabel ${head#*/*/})"
+	elif [[ $head != '' ]]; then
+	  gitcode=" $blue($gitlabel $head)"
+	else
+	  gitcode=" $blue($gitlabel)"
+	fi
+	break
+      fi
+      gitdir="../$gitdir"
+    done
     
     # Merge history with other shells.
     # It might be nice to pipe history stright into the python, instead of doing this file dance,
     # but a) we don't know how many commands to pipe, and b) the history number might interfere.
     histcode=""
     history -a
-    if python ~/.config/bash/unique_history.py "$HISTFILE"
+    if python ~/.python/eswald/unique_history.py "$HISTFILE" > /dev/null 2>&1
     then
       # Eternal history
       # Format: Process ID, user name, time finished, history number, time started, command

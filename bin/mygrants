@@ -1,4 +1,32 @@
 #!/bin/bash
 mysql -B -N "$@" -e "SELECT DISTINCT CONCAT(\"SHOW GRANTS FOR '\", user, \"'@'\", host, \"';\") AS query FROM mysql.user WHERE host rlike '^[0-9.]*%$|localhost' ORDER BY user, host" | \
   mysql "$@" | \
-  sed 's/\(GRANT .*\)/\1;/;s/^\(Grants for .*\)/## \1 ##/;/##/{x;p;x;}'
+  perl -lx "$0"
+exit
+
+#!/usr/bin/perl
+use strict;
+
+my %lines = ();
+my $granted = 0;
+
+while (<>) {
+	chomp;
+	if (/ ON ([`*].*[`*]) TO/) {
+		$lines{$1} = $_.';';
+	}
+	
+	if (%lines and (/^Grants/ or eof)) {
+		my $key;
+		foreach $key (sort(keys %lines)) {
+			print $lines{$key};
+		}
+	}
+	
+	if (/^Grants/) {
+		%lines = ();
+		print '' if $granted;
+		$granted = 1;
+		print "## $_ ##";
+	}
+}

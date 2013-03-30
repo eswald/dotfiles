@@ -35,7 +35,6 @@ shopt -s checkwinsize
 [ -x /usr/bin/lesspipe ] && eval "$(lesspipe)"
 [ -x /usr/bin/lessfilter ] && export LESSOPEN='|lessfilter %s'
 #export LESSCHARSET=iso8859
-export LESS=-FiRnS
 
 # Unbuffered python, in a custom environment
 export PYTHONUNBUFFERED=1
@@ -106,6 +105,9 @@ then
   if [ -f /etc/bash_completion ]
   then
     . /etc/bash_completion
+  elif [ -f /usr/share/bash-completion/bash_completion ]
+  then
+    . /usr/share/bash-completion/bash_completion
   elif [ -d /etc/bash_completion.d ]
   then
     # Missing the main bash completion file,
@@ -120,6 +122,8 @@ fi
 # Source any custom completion files.
 if [ -d ~/.config/bash ]
 then
+  # The GLOBIGNORE set below can interfere with this glob.
+  unset GLOBIGNORE
   for file in ~/.config/bash/*.sh
   do
     . $file
@@ -156,4 +160,4 @@ shopt -s extglob    # allows ?(), *(), +(), @(), !() in path expansion
 # Ignores hidden files, paths with control characters, and paths beginning with hyphens.
 # If you want a glob to return files beginning with hyphens, use ./* instead of *
 # Doesn't check for proper UTF-8 sequences, though.
-GLOBIGNORE=$(printf '.[!/.]*:..[!/]*:*/.[!/.]*:*/..[!/]*:*[\001-\037\177]*:-*')
+#GLOBIGNORE=$(printf '.[!/.]*:..[!/]*:*/.[!/.]*:*/..[!/]*:*[\001-\037\177]*:-*')
