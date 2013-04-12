@@ -20,3 +20,5 @@
 	excludesfile = /home/eswald/.config/gitignore
 [color]
 	ui = auto
+[pack]
+	windowMemory = 1g
