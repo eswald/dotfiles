@@ -26,8 +26,11 @@ function! EswaldCheckIndent()
     endif
     
     let l:spaces = strlen(matchstr(l:line, '^ *'))
-    let l:counts[abs(l:spaces - l:lastindent)] += 1
+    let l:diff = abs(l:spaces - l:lastindent)
     let l:lastindent = l:spaces
+    if l:diff <= 8
+      let l:counts[l:diff] += 1
+    endif
   endwhile
   
   let l:spaces = 0
