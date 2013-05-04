@@ -46,7 +46,9 @@ function! EswaldCheckIndent()
   
   if l:tablines > 2 * l:lines
     " Use tabs for indenting.
-    " Use presets for shiftwidth and tabstop.
+    " Use the preset value for shiftwidth,
+    " but ensure that the tabstop matches it.
+    let &l:tabstop = &l:shiftwidth
     setlocal noexpandtab
   elseif l:lines > 2 * l:tablines 
     " Use spaces for indenting.
