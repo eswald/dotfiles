@@ -1,5 +1,9 @@
 #!/usr/bin/env python
-import json
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 import sys
 from eswald.gittools import findroot, digests
 from plumbum.cmd import git
@@ -20,7 +24,7 @@ def df(params):
     # Run the diff command
     try:
         git["diff"][params] & FG
-    except ProcessExecutionError as err:
+    except ProcessExecutionError, err:
         sys.exit(err.retcode)
 
 if __name__ == "__main__":
