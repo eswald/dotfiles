@@ -4,37 +4,8 @@ if exists("b:did_ftplugin") | finish | endif
 setlocal nowrap tw=150 fo=crql1
 setlocal fen fdls=1 fdn=7 fdm=indent fdi=
 
-let s:tablines = 0
-let s:spacelines = 0
-let s:pos = getpos('.')
-try
-  redir => subcount
-  silent %s/^\t//ne
-  redir END
-  if strlen(subcount)
-    let s:tablines = matchstr(subcount, '\d\+') + 0
-  endif
-  
-  redir => subcount
-  silent %s/^    //ne
-  redir END
-  if strlen(subcount)
-    let s:spacelines = matchstr(subcount, '\d\+') + 0
-  endif
-finally
-  redir END
-  call setpos('.', s:pos)
-endtry
-
-if s:tablines > s:spacelines
-  " Use tabs for indenting.
-  let s:indenter = 'tabs'
-  setlocal sw=4 ts=4 noet
-else
-  " Use spaces for indenting.
-  let s:indenter = 'spaces'
-  setlocal sw=4 sts=4 ts=8 et
-endif
+setlocal sw=4 sts=4 ts=4 et
+call EswaldCheckIndent()
 
 
 " Let dollar signs be counted as part of the name

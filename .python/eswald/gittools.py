@@ -2,7 +2,13 @@ r'''Personalized tools for working with git repositories.
     Includes support for my git-df and git-ci commands.
 '''#"""#'''
 
-import json
+from __future__ import with_statement
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 import sys
 from hashlib import md5
 from plumbum.cmd import git

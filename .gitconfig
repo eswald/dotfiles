@@ -16,7 +16,10 @@
 	unstage = reset HEAD --
 	cached = diff --cached
 	dc = diff --cached
+	glog = log --graph --date-order --pretty=format:\"%h %ae: %s\" --decorate --abbrev-commit
 [core]
 	excludesfile = /home/eswald/.config/gitignore
 [color]
 	ui = auto
+[pack]
+	windowMemory = 1g

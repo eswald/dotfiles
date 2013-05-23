@@ -65,9 +65,12 @@ else
 fi
 
 # Debian uses "ack" for an entirely different command.
-if which ack-grep > /dev/null 2>&1
+if command -v ack-grep > /dev/null 2>&1
 then
   alias ack='ack-grep'
+elif ! command -v ack > /dev/null 2>&1
+then
+  alias ack='ack-standalone'
 fi
 
 # Find empty directories
