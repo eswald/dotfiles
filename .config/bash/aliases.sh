@@ -64,13 +64,10 @@ else
   alias open="$PAGER"
 fi
 
-# Debian uses "ack" for an entirely different command.
-if command -v ack-grep > /dev/null 2>&1
+# Use the silver search where available.
+if command -v ag > /dev/null 2>&1
 then
-  alias ack='ack-grep'
-elif ! command -v ack > /dev/null 2>&1
-then
-  alias ack='ack-standalone'
+  alias ack='ag'
 fi
 
 # Find empty directories
