@@ -2,6 +2,9 @@
 php=.thtml
 
 --type-set
+lua=.lua
+
+--type-set
 json=.json
 
 --type-set

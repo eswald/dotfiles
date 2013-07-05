@@ -29,7 +29,7 @@ def findroot():
 
 def digests(gitroot, params):
     try:
-        status = git["status", "--porcelain", "-uno"][params]()
+        status = git["status", "-z", "-uno"][params]()
     except ProcessExecutionError:
         # Ignore errors at this stage.
         # Just tell git ci not to add anything.
@@ -37,10 +37,19 @@ def digests(gitroot, params):
     
     with local.cwd(gitroot):
         checksums = {}
-        for line in status.splitlines():
+        for line in status.split("\0"):
+            if not line:
+                continue
+            
             if line[0] != " ":
                 # Something has been deliberately cached.
                 # Don't auto-commit anything else.
+                checksums.clear()
+                break
+            
+            if line[1] == "D":
+                # This file has been deleted.
+                # We might be able to auto-commit, but don't count on it.
                 checksums.clear()
                 break
             
