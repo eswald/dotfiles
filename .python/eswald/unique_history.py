@@ -21,7 +21,8 @@ def run(args):
     
     try:
         return mergelines(eternal, bash_file)
-    except Exception, err:
+    except Exception:
+        errtype, err, traceback = sys.exc_info()
         print err
         return 1
 

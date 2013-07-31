@@ -94,7 +94,7 @@ hi Directory    term=bold           cterm=bold ctermfg=4 ctermbg=0 gui=NONE guif
 hi ErrorMsg     term=standout       cterm=bold ctermfg=7 ctermbg=1 gui=NONE guifg=White        guibg=DarkRed
 hi IncSearch    term=reverse        cterm=NONE ctermfg=0 ctermbg=6 gui=NONE guifg=Black        guibg=DarkCyan
 hi Search       term=reverse        cterm=NONE ctermfg=0 ctermbg=3 gui=NONE guifg=Black        guibg=DarkYellow
-hi MatchParen   term=None           cterm=NONE ctermfg=5 ctermbg=0 gui=NONE                    guibg=DarkMagenta
+hi MatchParen   term=bold           cterm=bold ctermfg=4           gui=NONE                    guibg=DarkMagenta
 hi MoreMsg      term=bold           cterm=NONE ctermfg=2 ctermbg=0 gui=NONE guifg=DarkGreen    guibg=bg
 hi ModeMsg      term=bold           cterm=bold ctermfg=6 ctermbg=0 gui=NONE guifg=LightCyan    guibg=bg
 hi LineNr       term=underline      cterm=NONE ctermfg=5 ctermbg=0 gui=NONE guifg=DarkMagenta  guibg=bg
