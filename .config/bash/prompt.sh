@@ -134,4 +134,4 @@
     echo "$reset$exitcode $usercode$envcode$gitcode $timecode $jobcode$normal\n$pathcode$cyan>$normal "
   }
   
-  PROMPT_COMMAND='PS1="$(eswald_prompt)"'
+  PROMPT_COMMAND="PS1='\[\e[0;36m\]\w>\[\e[m\] ';PROMPT_COMMAND='PS1=\"$(eswald_prompt)\"'"
