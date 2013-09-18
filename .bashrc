@@ -123,18 +123,6 @@ fi
 # Do NOT export this variable.
 #CDPATH=.:~
 
-# Collect SSH agent credentials if available.
-if [ -z "$SSH_AGENT_PID" ]
-then
-  sshagent=$(ps -u eswald -o pid,comm | grep ssh-agent | head -n 1)
-  sshsock=$(ls -ld /tmp/keyring-*/ssh {~,}/tmp/ssh-*/agent.* 2>/dev/null | grep eswald | head -n 1)
-  if [ -n "$sshagent" -a -n "$sshsock" ]
-  then
-    export SSH_AGENT_PID="$(echo "$sshagent" | sed 's/^ *\([0-9]\+\) .*/\1/')"
-    export SSH_AUTH_SOCK="$(echo "$sshsock" | sed 's%^.* /%/%')"
-  fi
-fi
-
 # Allow these shell options to work in all interactive shells
 shopt -s cdspell    # correct minor spelling errors in 'cd' arguments
 shopt -s cmdhist    # save multi-line commands as a single history entry
