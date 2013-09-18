@@ -15,16 +15,13 @@ fi
 # Find a decent pager
 if command -v less > /dev/null 2>&1
 then
-  if [ "${TERM//.*}" = "screen" ]
-  then
-    # Allow less to disappear when it can display everything on a single screen.
-    export LESS=-FiRnS
-  else
-    # Not in a screen/tmux session, so less might unfortunately use the alternate screen.
-    # That makes -F unusable, because it tends to disappear.
-    export LESS=-iRnS
-  fi
-  
+  # -F: Allow less to exit immediately when it can display everything on a single screen.
+  # -i: Smart case when searching.
+  # -n: Suppress line numbers, to speed up large files and buffers.
+  # -R: Pass color escape sequences to the terminal.
+  # -S: Chop long lines instead of wrapping; use arrow keys to see more.
+  # -X: Don't initialize termcap, so the text doesn't disappear.
+  export LESS=-FinRSX
   export PAGER="less $LESS"
 elif command -v more > /dev/null 2>&1
 then
