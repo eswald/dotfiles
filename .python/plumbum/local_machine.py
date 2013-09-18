@@ -30,7 +30,7 @@ except ImportError:
 
 logger = logging.getLogger("plumbum.local")
 
-IS_WIN32 = os.name == "nt"
+IS_WIN32 = os.name == "nt" or sys.platform == "cygwin"
 
 #===================================================================================================
 # Local Paths
@@ -457,7 +457,7 @@ class LocalMachine(object):
     uname = platform.uname()[0]
 
     if IS_WIN32:
-        _EXTENSIONS = [""] + env.get("PATHEXT", ":.exe:.bat").lower().split(os.path.pathsep)
+        _EXTENSIONS = [""] + env.get("PATHEXT", ":.exe:.bat").replace(";", os.path.pathsep).lower().split(os.path.pathsep)
 
         @classmethod
         def _which(cls, progname):
