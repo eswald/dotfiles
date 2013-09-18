@@ -7,7 +7,7 @@ list = locate --include . '*'
 ls = list
 
 [pager]
-pager = LESS=-FiRS less
+pager = less -FinRSX
 
 [extensions]
 alias = ~/.config/hg-extensions/alias.py
