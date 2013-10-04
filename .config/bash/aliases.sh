@@ -40,6 +40,11 @@ then
   function tree {
     /usr/bin/tree -C "$@" | $PAGER
   }
+elif command -v ddir > /dev/null 2>&1
+then
+  function tree {
+    ddir -C "$@" | $PAGER
+  }
 fi
 
 # Use an enhanced python when available,
