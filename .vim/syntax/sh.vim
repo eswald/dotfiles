@@ -102,6 +102,8 @@ syn case match
 syn cluster shErrorList	contains=shDoError,shIfError,shInError,shCaseError,shEsacError,shCurlyError,shParenError,shTestError,shOK
 if exists("b:is_kornshell")
  syn cluster ErrorList add=shDTestError
+elseif exists("b:is_dash")
+ syn cluster ErrorList add=shFunctionError
 endif
 syn cluster shArithParenList	contains=shArithmetic,shCaseEsac,shDeref,shDerefSimple,shEcho,shEscape,shNumber,shOperator,shPosnParm,shExSingleQuote,shExDoubleQuote,shRedir,shSingleQuote,shDoubleQuote,shStatement,shVariable,shAlias,shTest,shCtrlSeq,shSpecial,shParen,bashSpecialVariables,bashStatement
 syn cluster shArithList	contains=@shArithParenList,shParenError
@@ -390,7 +392,9 @@ else
 endif
 
 " Functions: {{{1
-if !exists("g:is_posix")
+if exists("b:is_dash")
+  syn keyword shFunctionError function	skipwhite skipnl nextgroup=shFunctionTwo
+elseif !exists("g:is_posix")
  syn keyword shFunctionKey function	skipwhite skipnl nextgroup=shFunctionTwo
 endif
 
@@ -619,6 +623,8 @@ if !exists("g:sh_no_error")
  hi def link shTestError		Error
  if exists("b:is_kornshell")
    hi def link shDTestError		Error
+ elseif exists("b:is_dash")
+   hi def link shFunctionError		Error
  endif
 endif
 
