@@ -58,7 +58,7 @@ if !exists("b:is_kornshell") && !exists("b:is_bash")
     if exists("b:is_sh")
       unlet b:is_sh
     endif
-  elseif exists("g:is_bash")
+  elseif exists("g:is_bash") || expand("%") =~ "bash"
     let b:is_bash= 1
     if exists("b:is_sh")
       unlet b:is_sh
