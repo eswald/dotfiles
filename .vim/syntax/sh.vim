@@ -26,18 +26,22 @@ elseif !exists("g:sh_noisk")   " prevent modification support
 endif
 
 " trying to answer the question: which shell is /bin/sh, really?
-if !exists("g:is_kornshell") && !exists("g:is_bash") && !exists("g:is_posix") && !exists("g:is_sh")
+if !exists("g:is_kornshell") && !exists("g:is_bash") && !exists("g:is_dash") && !exists("g:is_posix") && !exists("g:is_sh")
  if executable("/bin/sh")
   if     resolve("/bin/sh") =~ 'bash$'
    let g:is_bash= 1
   elseif resolve("/bin/sh") =~ 'ksh$'
    let g:is_ksh = 1
+  elseif resolve("/bin/sh") =~ 'dash$'
+   let g:is_dash = 1
   endif
  elseif executable("/usr/bin/sh")
   if     resolve("/usr/bin//sh") =~ 'bash$'
    let g:is_bash= 1
   elseif resolve("/usr/bin//sh") =~ 'ksh$'
    let g:is_ksh = 1
+  elseif resolve("/usr/bin//sh") =~ 'dash$'
+   let g:is_dash = 1
   endif
  endif
 endif
@@ -63,6 +67,8 @@ if !exists("b:is_kornshell") && !exists("b:is_bash")
     if exists("b:is_sh")
       unlet b:is_sh
     endif
+  elseif exists("g:is_dash")
+    let b:is_dash= 1
   else
     let b:is_sh= 1
   endif
@@ -260,7 +266,7 @@ syn match   shEscape	contained	'\\.'         contains=@shCommandSubList
 " (ie. Posix compliant shell).  /bin/ksh should work for those
 " systems too, however, so the following syntax will flag $(..) as
 " an Error under /bin/sh.  By consensus of vimdev'ers!
-if exists("b:is_kornshell") || exists("b:is_bash")
+if exists("b:is_kornshell") || exists("b:is_bash") || exists("b:is_dash")
  syn region shCommandSub matchgroup=shCmdSubRegion start="\$("  skip='\\\\\|\\.' end=")"  contains=@shCommandSubList
  syn region shArithmetic matchgroup=shArithRegion  start="\$((" skip='\\\\\|\\.' end="))" contains=@shArithList
  syn match  shSkipInitWS contained	"^\s\+"
