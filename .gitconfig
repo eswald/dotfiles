@@ -23,3 +23,5 @@
 	ui = auto
 [pack]
 	windowMemory = 1g
+[push]
+	default = simple
