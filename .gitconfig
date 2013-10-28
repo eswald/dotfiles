@@ -24,4 +24,4 @@
 [pack]
 	windowMemory = 1g
 [push]
-	default = upstream
+	default = tracking
