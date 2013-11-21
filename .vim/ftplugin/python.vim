@@ -1,4 +1,5 @@
 setlocal sts=4 sw=4 ts=8 et nowrap tw=78 fo=crql1j
+call EswaldCheckIndent()
 setlocal fen fdls=1 fdn=5 fdm=indent fdi=
 let python_highlight_all = 1
 let b:delimiter_chars = "s:',om:r''':'''#\"\"\"#''',\",(:),[:],{:}"
