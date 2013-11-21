@@ -226,7 +226,7 @@ endif
 
 if exists("python_space_error_highlight")
   " trailing whitespace
-  syn match   pythonSpaceError	display excludenl "\s\+$"
+  syn match   pythonSpaceError	display excludenl "\S\@<=\s\+$"
   " mixed tabs and spaces
   syn match   pythonSpaceError	display " \+\t"
   syn match   pythonSpaceError	display "\t\+ "
