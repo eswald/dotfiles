@@ -10,7 +10,7 @@ nnoremap <buffer> <F2> :!ctags %:p:h/*.py<CR>
 
 " Search for function definition
 " Todo: Search for import statements, too.
-nnoremap <buffer> [d ?^[<space>\t]*\(def\<bar>class\)<space>\zs<C-R>=expand('<cword>')<CR>\><CR>
+nnoremap <buffer> [d ?^[<space>\t]*\(def\<bar>class\<bar>import.*\<bar>from<space>.*import.*\)<space>\zs<C-R>=expand('<cword>')<CR>\><CR>
 
 " Blocks, instead of sentences
 nnoremap <silent> <buffer> ) /^\s*\zs$<CR>
