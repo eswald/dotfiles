@@ -4,6 +4,7 @@ set sessionoptions-=buffers
 set sessionoptions-=winsize
 set sessionoptions-=curdir
 set sessionoptions-=folds
+set sessionoptions-=help
 set sessionoptions+=winpos
 set sessionoptions+=resize
 set sessionoptions+=tabpages
