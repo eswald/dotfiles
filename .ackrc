@@ -13,7 +13,7 @@ pascal=.pas,.lpr
 --type-set
 dvorak=.ddd
 
---pager=less -R
+--pager=less -FinRSX
 
 --ignore-file
 is:.coverage
