@@ -15,6 +15,17 @@ function! SaveCurrentSession()
   if v:this_session != "" && !exists("g:SessionLoad")
     " Todo: Escape any whitespace, particularly spaces
     exe "mksession! " . v:this_session
+    
+    " Write custom tab names to another file.
+    " Source that one, instead of the main session file.
+    let lines = ['source '.escape(v:this_session, ' \')]
+    for i in range(tabpagenr('$'))
+      let name = gettabvar(i, 'tabname')
+      if name != ''
+	let lines += ['call settabvar('.i.', "tabname", "'.escape(name, '"\').'")']
+      endif
+    endfor
+    call writefile(lines, substitute(v:this_session, '[^/]*$', 'Tab\0', ''))
   endif
 endfunction
 
