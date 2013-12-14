@@ -15,6 +15,9 @@ dvorak=.ddd
 
 --pager=less -R
 
+--ignore-file
+is:.coverage
+
 --ignore-dir
 tiny_mce
 
@@ -29,3 +32,6 @@ sandbox
 
 --ignore-dir
 flex
+
+--ignore-dir
+htmlcov
