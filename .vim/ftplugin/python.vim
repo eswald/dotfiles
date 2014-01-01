@@ -3,6 +3,7 @@ call EswaldCheckIndent()
 setlocal fen fdls=1 fdn=5 fdm=indent fdi=
 let python_highlight_all = 1
 let b:delimiter_chars = "s:',om:r''':'''#\"\"\"#''',\",(:),[:],{:}"
+setlocal iskeyword=@,48-57,_,192-255
 
 " Easier tagging and searching
 nnoremap <silent> <buffer> <F1> :sp<BAR>tag <C-R>=expand('<cword>')<CR><CR>
