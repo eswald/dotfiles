@@ -35,10 +35,10 @@ alias psh="ps -eHOuser,vsize,pmem | $PAGER"
 alias psc="ps xawf -eo pid,user,cgroup,args | $PAGER"
 
 # Colorize and page tree output, by default.
-if [ -x /usr/bin/tree ]
+if command -v tree > /dev/null 2>&1
 then
   function tree {
-    /usr/bin/tree -C "$@" | $PAGER
+    command tree -C "$@" | $PAGER
   }
 elif command -v ddir > /dev/null 2>&1
 then
@@ -89,7 +89,7 @@ else
   
   # Automatic paging and formatting for diffs
   function diff {
-    /usr/bin/diff -uw "$@" | $PAGER
+    command diff -uw "$@" | $PAGER
   }
 fi
 
@@ -121,13 +121,13 @@ function da {
 # Automatic pager for certain subversion commands.
 function svn {
   case "$1" in
-    diff) /usr/bin/svn "$@" --no-diff-deleted | colordiff | $PAGER ;;
-    less) shift; /usr/bin/svn cat "$@" | $PAGER ;;
-    blame) /usr/bin/svn "$@" | $PAGER ;;
-    help) /usr/bin/svn "$@" | $PAGER ;;
-    log) /usr/bin/svn "$@" | $PAGER ;;
-    st) /usr/bin/svn "$@" | $PAGER ;;
-    *) /usr/bin/svn "$@" ;;
+    diff) command svn "$@" --no-diff-deleted | colordiff | $PAGER ;;
+    less) shift; command svn cat "$@" | $PAGER ;;
+    blame) command svn "$@" | $PAGER ;;
+    help) command svn "$@" | $PAGER ;;
+    log) command svn "$@" | $PAGER ;;
+    st) command svn "$@" | $PAGER ;;
+    *) command svn "$@" ;;
   esac
 }
 
