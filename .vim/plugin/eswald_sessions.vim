@@ -20,9 +20,9 @@ function! SaveCurrentSession()
     " Source that one, instead of the main session file.
     let lines = ['source '.escape(v:this_session, ' \')]
     for i in range(tabpagenr('$'))
-      let name = gettabvar(i, 'tabname')
+      let name = gettabvar(i+1, 'tabname')
       if name != ''
-	let lines += ['call settabvar('.i.', "tabname", "'.escape(name, '"\').'")']
+	let lines += ['call settabvar('.(i+1).', "tabname", "'.escape(name, '"\').'")']
       endif
     endfor
     call writefile(lines, substitute(v:this_session, '[^/]*$', 'Tab\0', ''))
