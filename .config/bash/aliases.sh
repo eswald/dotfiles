@@ -49,7 +49,7 @@ fi
 
 # Use an enhanced python when available,
 # but keep it within the virtualenv.
-if which ipython > /dev/null 2>&1
+if command -v ipython > /dev/null 2>&1
 then
   alias ipy="python `which ipython`"
 else
@@ -77,7 +77,7 @@ function empties {
   find "$@" -type d -empty
 }
 
-if which colordiff > /dev/null 2>&1
+if command -v colordiff > /dev/null 2>&1
 then
   # Automatic colorization and paging for diffs
   function diff {
