@@ -5,8 +5,10 @@ startup_message off
 escape `\\
 
 # Give myself a good other key, because the default has been remapped.
+# Apply it to both ways a backspace could be sent.
 bind = other
 bind \177 other
+bind "^H" other
 
 # Easier window title key, because time is useless.
 bind t title
