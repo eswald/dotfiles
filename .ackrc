@@ -29,3 +29,6 @@ sandbox
 
 --ignore-dir
 flex
+
+--ignore-file
+ext:nwc
