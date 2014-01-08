@@ -4,8 +4,16 @@ nnoremap <silent> <S-C-Tab> :tabprev<CR>
 nnoremap <silent> <C-T> :tabnew<CR>
 
 " Moving tabs around
-nnoremap <silent> <F6> :silent! exec 'tabmove '.(tabpagenr() - 2)<CR>
-nnoremap <silent> <F7> :exec 'tabmove '.tabpagenr()<CR>
+if version >= 704
+  nnoremap <silent> <F6> :tabmove -1<CR>
+  nnoremap <silent> <F7> :tabmove +1<CR>
+else
+  nnoremap <silent> <F6> :silent! exec 'tabmove '.(tabpagenr() - 2)<CR>
+  nnoremap <silent> <F7> :exec 'tabmove '.tabpagenr()<CR>
+endif
+
+nmap `<F6> <F6>
+nmap `<F7> <F7>
 
 " Most recently used tab
 command! EswaldSaveTab exec "nnoremap `<lt>BS> :EswaldSaveTab<CR>".tabpagenr()."gt"
