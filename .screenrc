@@ -69,7 +69,8 @@ bindkey "^[[1;5C" next
 bindkey "^[[1;5D" prev
 
 # Try to bind Ctrl-Tab and Ctrl-Shift-Tab
-#bindkey "^[[1;5C" next
+bindkey "^[[27;5;9~" next
+bindkey "^[[27;6;9~" prev
 bindkey "^[[Z" prev
 
 # Todo: ^[[A / ^[[B to scroll up / down
