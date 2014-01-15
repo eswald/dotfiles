@@ -16,7 +16,7 @@ function! EswaldCheckIndent()
     
     " Ignore lines likely to give odd results.
     " Whitespace lines, comment lines, and mixed tabs, for example.
-    if l:line =~ '^\s*$\|^\s*[/*"#{}]\|^ \+\t'
+    if l:line =~ '^\s*$\|^\s*[/*#{}]\|^ \+\t'
       continue
     endif
     

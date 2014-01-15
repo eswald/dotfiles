@@ -3,6 +3,7 @@ call EswaldCheckIndent()
 setlocal fen fdls=1 fdn=5 fdm=indent fdi=
 let python_highlight_all = 1
 let b:delimiter_chars = "s:',om:r''':'''#\"\"\"#''',\",(:),[:],{:}"
+setlocal iskeyword=@,48-57,_,192-255
 
 setlocal formatoptions-=t
 setlocal formatoptions+=c
@@ -30,5 +31,5 @@ nnoremap <buffer> <F2> :!ctags %:p:h/*.py<CR>
 nnoremap <buffer> [d ?^[<space>\t]*\(def\<bar>class\<bar>import.*\<bar>from<space>.*import.*\)<space>\zs<C-R>=expand('<cword>')<CR>\><CR>
 
 " Blocks, instead of sentences
-nnoremap <silent> <buffer> ) /^\s*\zs$<CR>
-nnoremap <silent> <buffer> ( ?^\s*\zs$<CR>
+nnoremap <silent> <buffer> ) /^\s*\zs$\<Bar>\%$<CR>
+nnoremap <silent> <buffer> ( ?^\s*\zs$\<Bar>\%^<CR>

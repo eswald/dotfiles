@@ -4,6 +4,7 @@ set sessionoptions-=buffers
 set sessionoptions-=winsize
 set sessionoptions-=curdir
 set sessionoptions-=folds
+set sessionoptions-=help
 set sessionoptions+=winpos
 set sessionoptions+=resize
 set sessionoptions+=tabpages
@@ -14,6 +15,17 @@ function! SaveCurrentSession()
   if v:this_session != "" && !exists("g:SessionLoad")
     " Todo: Escape any whitespace, particularly spaces
     exe "mksession! " . v:this_session
+    
+    " Write custom tab names to another file.
+    " Source that one, instead of the main session file.
+    let lines = ['source '.escape(v:this_session, ' \')]
+    for i in range(tabpagenr('$'))
+      let name = gettabvar(i+1, 'tabname')
+      if name != ''
+	let lines += ['call settabvar('.(i+1).', "tabname", "'.escape(name, '"\').'")']
+      endif
+    endfor
+    call writefile(lines, substitute(v:this_session, '[^/]*$', 'Tab\0', ''))
   endif
 endfunction
 
