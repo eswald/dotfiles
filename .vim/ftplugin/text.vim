@@ -10,6 +10,10 @@ vnoremap <buffer> <C-B> <C-\><C-N>g`>a*<C-\><C-N>g`<i*<C-\><C-G>
 " Italics would be nice, but <C-I> also happens to be <Tab>...
 "vnoremap <buffer> <C-I> <C-\><C-N>g`>a/<C-\><C-N>g`<i/<C-\><C-G>
 
+" Simplify todo lists.
+" Typing a checkmark is hard enough without requiring the replace character command.
+nnoremap <buffer> ✓ r✓
+
 if &keymap == "dvorak"
   "set iminsert=1
 endif 
