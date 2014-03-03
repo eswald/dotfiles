@@ -1,5 +1,5 @@
 colorscheme darkblue
-set guifont=Terminus\ 12,DejaVu\ Sans\ Mono\ 10,Bitstream\ Vera\ Sans\ Mono\ 10,Liberation\ Mono\ 10,Monospace\ 10
+set guifont=Ubuntu\ Mono\ 12,Terminus\ 12,DejaVu\ Sans\ Mono\ 10,Bitstream\ Vera\ Sans\ Mono\ 10,Liberation\ Mono\ 10,Monospace\ 10
 "set guifont=Terminus\ 12
 "set guifont=DejaVu\ Sans\ Mono\ 10
 "set guifont=Bitstream\ Vera\ Sans\ Mono\ 10
