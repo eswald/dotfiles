@@ -36,5 +36,8 @@ flex
 --ignore-dir
 htmlcov
 
+--ignore-dir
+cache
+
 --ignore-file
 ext:nwc
