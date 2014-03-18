@@ -58,6 +58,10 @@ fun! <SID>HtmlIndentOpen(text)
     let s = substitute(s, '\c<\%('.g:html_indent_tags.'\)\>[^>]*>', '', 'g')
     let s = substitute(s, '\c<\%('.g:html_indent_tags.'\)\>[^>]*$', '<', 'g')
     let s = substitute(s, '<[^<>]\+$', '<<', 'g')
+    if exists('b:django_blocks')
+	" Django framework tags
+	let s = substitute(s, '{%\s*\%('.b:django_blocks.'\)', '<', 'g')
+    endif
     let s = substitute(s, '[^<]\+', '', 'g')
     return strlen(s)
 endfun
@@ -65,6 +69,9 @@ endfun
 " [-- count indent-decreasing tags in the text --]
 fun! <SID>HtmlIndentClose(text)
     let s = substitute(a:text, '</\@![^>]*>', '', 'g')
+    if exists('b:django_blocks')
+	let s = substitute(s, '{%\s*end', '>', 'g')
+    endif
     let s = substitute(s, '[^>]\+', '', 'g')
     "return (mode() == 'i' && col('.') == 1) ? 0 : strlen(s)
     return strlen(s)
@@ -95,7 +102,11 @@ fun! <SID>HtmlIndentSum(lnum, state)
 	let part = <SID>HtmlIndentStrpart(text, '}', a:state)
 	return <SID>HtmlIndentOpenAlt(part) - <SID>HtmlIndentCloseAlt(part)
     else
-	let part = <SID>HtmlIndentStrpart(text, '</[^>]*>', a:state)
+	let pattern = '</[^>]*>'
+	if exists('b:django_blocks')
+	    let pattern = pattern . '\|\s*{%\s*end\w*\s*%}'
+	endif
+	let part = <SID>HtmlIndentStrpart(text, pattern, a:state)
 	return <SID>HtmlIndentOpen(part) - <SID>HtmlIndentClose(part)
     endif
     return 0
