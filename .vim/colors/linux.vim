@@ -46,32 +46,55 @@ if exists("syntax_on")
 endif
 let g:colors_name = "linux"
 
-hi Normal term=NONE cterm=NONE ctermfg=6 ctermbg=0 gui=NONE guifg=DarkCyan guibg=Black
-hi Ignore term=bold cterm=bold ctermfg=0 ctermbg=0 gui=NONE guifg=DarkGray guibg=bg
+" Some systems use BGR instead of RGB;
+" let g:colorswap = 1 to correct that.
+if exists("g:colorswap") && g:colorswap
+  let s:black   = 0
+  let s:blue    = 1
+  let s:green   = 2
+  let s:cyan    = 3
+  let s:red     = 4
+  let s:magenta = 5
+  let s:yellow  = 6
+  let s:white   = 7
+else
+  let s:black   = 0
+  let s:red     = 1
+  let s:green   = 2
+  let s:yellow  = 3
+  let s:blue    = 4
+  let s:magenta = 5
+  let s:cyan    = 6
+  let s:white   = 7
+endif
+
+exec "hi Normal term=NONE cterm=NONE ctermfg=".s:cyan  "ctermbg=".s:black "gui=NONE guifg=DarkCyan guibg=Black"
+exec "hi Ignore term=bold cterm=bold ctermfg=".s:black "ctermbg=".s:black "gui=NONE guifg=DarkGray guibg=bg"
 
 " Standard syntax highlighting colors
-hi Comment      term=bold      cterm=NONE ctermfg=5 ctermbg=0 gui=NONE guifg=DarkMagenta guibg=bg
-hi Constant     term=underline cterm=NONE ctermfg=1 ctermbg=0 gui=NONE guifg=DarkRed     guibg=bg
-hi Identifier   term=underline cterm=NONE ctermfg=2 ctermbg=0 gui=NONE guifg=DarkGreen   guibg=bg
-hi Statement    term=bold      cterm=NONE ctermfg=3 ctermbg=0 gui=NONE guifg=DarkYellow  guibg=bg
-hi PreProc      term=underline cterm=bold ctermfg=4 ctermbg=0 gui=NONE guifg=LightBlue   guibg=bg
-hi Type         term=underline cterm=NONE ctermfg=7 ctermbg=0 gui=NONE guifg=LightGray   guibg=bg
-hi Special      term=bold      cterm=NONE ctermfg=7 ctermbg=4 gui=NONE guifg=LightGray   guibg=DarkBlue
-hi Underlined   term=underline cterm=bold ctermfg=6 ctermbg=0 gui=NONE guifg=LightCyan   guibg=bg
-hi Error        term=reverse   cterm=NONE ctermfg=7 ctermbg=1 gui=NONE guifg=LightGray   guibg=DarkRed
-hi Todo         term=standout  cterm=bold ctermfg=3 ctermbg=0 gui=NONE guifg=LightYellow guibg=bg
+exec "hi Comment      term=bold      cterm=NONE ctermfg=".s:magenta "ctermbg=".s:black "gui=NONE guifg=DarkMagenta guibg=bg"
+exec "hi Constant     term=underline cterm=NONE ctermfg=".s:red     "ctermbg=".s:black "gui=NONE guifg=DarkRed     guibg=bg"
+exec "hi Identifier   term=underline cterm=NONE ctermfg=".s:green   "ctermbg=".s:black "gui=NONE guifg=DarkGreen   guibg=bg"
+exec "hi Statement    term=bold      cterm=NONE ctermfg=".s:yellow  "ctermbg=".s:black "gui=NONE guifg=DarkYellow  guibg=bg"
+exec "hi PreProc      term=underline cterm=bold ctermfg=".s:blue    "ctermbg=".s:black "gui=NONE guifg=LightBlue   guibg=bg"
+exec "hi Type         term=underline cterm=NONE ctermfg=".s:white   "ctermbg=".s:black "gui=NONE guifg=LightGray   guibg=bg"
+exec "hi Special      term=bold      cterm=NONE ctermfg=".s:white   "ctermbg=".s:blue  "gui=NONE guifg=LightGray   guibg=DarkBlue"
+exec "hi Underlined   term=underline cterm=bold ctermfg=".s:cyan    "ctermbg=".s:black "gui=NONE guifg=LightCyan   guibg=bg"
+exec "hi Error        term=reverse   cterm=NONE ctermfg=".s:white   "ctermbg=".s:red   "gui=NONE guifg=LightGray   guibg=DarkRed"
+exec "hi Todo         term=standout  cterm=bold ctermfg=".s:yellow  "ctermbg=".s:black "gui=NONE guifg=LightYellow guibg=bg"
 
 " Secondary syntax categories
+exec "hi Number       term=underline cterm=bold ctermfg=".s:red     "ctermbg=".s:black "gui=NONE guifg=Red     guibg=bg"
+exec "hi Label        term=underline cterm=bold ctermfg=".s:green   "ctermbg=".s:black "gui=NONE guifg=Green   guibg=bg"
+exec "hi Operator     term=underline cterm=bold ctermfg=".s:magenta "ctermbg=".s:black "gui=NONE guifg=Magenta guibg=bg"
+exec "hi Tag          term=underline cterm=bold ctermfg=".s:white   "ctermbg=".s:black "gui=NONE guifg=White   guibg=bg"
 hi link String          Constant
 hi link Character       Constant
-hi      Number          term=underline cterm=bold ctermfg=1 ctermbg=0 gui=NONE guifg=Red     guibg=bg
 hi link Boolean         Constant
 hi link Float           Number
 hi link Function        Identifier
 hi link Conditional     Statement
 hi link Repeat          Statement
-hi      Label           term=underline cterm=bold ctermfg=2 ctermbg=0 gui=NONE guifg=Green   guibg=bg
-hi      Operator        term=underline cterm=bold ctermfg=5 ctermbg=0 gui=NONE guifg=Magenta guibg=bg
 hi link Keyword         Statement
 hi link Exception       Statement
 hi link Include         PreProc
@@ -82,38 +105,37 @@ hi link StorageClass    Type
 hi link Structure       Type
 hi link Typedef         Type
 hi link SpecialChar     Special
-hi      Tag             term=underline cterm=bold ctermfg=7 ctermbg=0 gui=NONE guifg=White   guibg=bg
 hi link Delimiter       Special
 hi link SpecialComment  Special
 hi link Debug           Special
 
 " System colors
-hi SpecialKey   term=bold           cterm=bold ctermfg=4 ctermbg=0 gui=NONE guifg=LightBlue    guibg=bg
-hi NonText      term=bold           cterm=bold ctermfg=0 ctermbg=0 gui=NONE guifg=DarkGray     guibg=bg
-hi Directory    term=bold           cterm=bold ctermfg=4 ctermbg=0 gui=NONE guifg=LightBlue    guibg=bg
-hi ErrorMsg     term=standout       cterm=bold ctermfg=7 ctermbg=1 gui=NONE guifg=White        guibg=DarkRed
-hi IncSearch    term=reverse        cterm=NONE ctermfg=0 ctermbg=6 gui=NONE guifg=Black        guibg=DarkCyan
-hi Search       term=reverse        cterm=NONE ctermfg=0 ctermbg=3 gui=NONE guifg=Black        guibg=DarkYellow
-hi MatchParen   term=bold           cterm=bold ctermfg=4 ctermbg=8 gui=NONE                    guibg=DarkMagenta
-hi MoreMsg      term=bold           cterm=NONE ctermfg=2 ctermbg=0 gui=NONE guifg=DarkGreen    guibg=bg
-hi ModeMsg      term=bold           cterm=bold ctermfg=6 ctermbg=0 gui=NONE guifg=LightCyan    guibg=bg
-hi LineNr       term=underline      cterm=NONE ctermfg=5 ctermbg=0 gui=NONE guifg=DarkMagenta  guibg=bg
-hi Question     term=standout       cterm=NONE ctermfg=2 ctermbg=0 gui=NONE guifg=DarkGreen    guibg=bg
-hi StatusLine   term=bold,reverse   cterm=NONE ctermfg=7 ctermbg=4 gui=NONE guifg=LightGray    guibg=DarkBlue
-hi StatusLineNC term=reverse        cterm=NONE ctermfg=0 ctermbg=4 gui=NONE guifg=Black        guibg=DarkBlue
-hi VertSplit    term=reverse        cterm=NONE ctermfg=4 ctermbg=4 gui=NONE guifg=DarkBlue     guibg=DarkBlue
-hi Title        term=bold           cterm=bold ctermfg=2 ctermbg=0 gui=NONE guifg=LightMagenta guibg=bg
-hi Visual       term=reverse        cterm=NONE ctermfg=0 ctermbg=5 gui=NONE guifg=Black        guibg=DarkMagenta
-hi VisualNOS    term=bold,underline cterm=bold ctermfg=7 ctermbg=6 gui=NONE guifg=White        guibg=DarkCyan
-hi WarningMsg   term=standout       cterm=NONE ctermfg=1 ctermbg=0 gui=NONE guifg=DarkRed      guibg=bg
-hi WildMenu     term=standout       cterm=bold ctermfg=3 ctermbg=4 gui=NONE guifg=LightYellow  guibg=DarkBlue
-hi Folded       term=standout       cterm=NONE ctermfg=4 ctermbg=0 gui=NONE guifg=DarkBlue     guibg=bg
-hi FoldColumn   term=standout       cterm=NONE ctermfg=4 ctermbg=0 gui=NONE guifg=DarkBlue     guibg=bg
-hi DiffAdd      term=bold           cterm=NONE ctermfg=0 ctermbg=2 gui=NONE guifg=Black        guibg=DarkGreen
-hi DiffChange   term=bold           cterm=NONE ctermfg=7 ctermbg=5 gui=NONE guifg=LightGray    guibg=DarkMagenta
-hi DiffDelete   term=bold           cterm=NONE ctermfg=1 ctermbg=1 gui=NONE guifg=DarkRed      guibg=DarkRed
-hi DiffText     term=reverse        cterm=bold ctermfg=7 ctermbg=5 gui=NONE guifg=White        guibg=DarkMagenta
-hi SignColumn   term=standout       cterm=bold ctermfg=5 ctermbg=0 gui=NONE guifg=LightMagenta guibg=bg
+exec "hi SpecialKey   term=bold           cterm=bold ctermfg=".s:blue    "ctermbg=".s:black   "gui=NONE guifg=LightBlue    guibg=bg"
+exec "hi NonText      term=bold           cterm=bold ctermfg=".s:black   "ctermbg=".s:black   "gui=NONE guifg=DarkGray     guibg=bg"
+exec "hi Directory    term=bold           cterm=bold ctermfg=".s:blue    "ctermbg=".s:black   "gui=NONE guifg=LightBlue    guibg=bg"
+exec "hi ErrorMsg     term=standout       cterm=bold ctermfg=".s:white   "ctermbg=".s:red     "gui=NONE guifg=White        guibg=DarkRed"
+exec "hi IncSearch    term=reverse        cterm=NONE ctermfg=".s:black   "ctermbg=".s:cyan    "gui=NONE guifg=Black        guibg=DarkCyan"
+exec "hi Search       term=reverse        cterm=NONE ctermfg=".s:black   "ctermbg=".s:yellow  "gui=NONE guifg=Black        guibg=DarkYellow"
+exec "hi MatchParen   term=bold           cterm=bold ctermfg=".s:blue    "ctermbg=".8         "gui=NONE                    guibg=DarkMagenta"
+exec "hi MoreMsg      term=bold           cterm=NONE ctermfg=".s:green   "ctermbg=".s:black   "gui=NONE guifg=DarkGreen    guibg=bg"
+exec "hi ModeMsg      term=bold           cterm=bold ctermfg=".s:cyan    "ctermbg=".s:black   "gui=NONE guifg=LightCyan    guibg=bg"
+exec "hi LineNr       term=underline      cterm=NONE ctermfg=".s:magenta "ctermbg=".s:black   "gui=NONE guifg=DarkMagenta  guibg=bg"
+exec "hi Question     term=standout       cterm=NONE ctermfg=".s:green   "ctermbg=".s:black   "gui=NONE guifg=DarkGreen    guibg=bg"
+exec "hi StatusLine   term=bold,reverse   cterm=NONE ctermfg=".s:white   "ctermbg=".s:blue    "gui=NONE guifg=LightGray    guibg=DarkBlue"
+exec "hi StatusLineNC term=reverse        cterm=NONE ctermfg=".s:black   "ctermbg=".s:blue    "gui=NONE guifg=Black        guibg=DarkBlue"
+exec "hi VertSplit    term=reverse        cterm=NONE ctermfg=".s:blue    "ctermbg=".s:blue    "gui=NONE guifg=DarkBlue     guibg=DarkBlue"
+exec "hi Title        term=bold           cterm=bold ctermfg=".s:green   "ctermbg=".s:black   "gui=NONE guifg=LightMagenta guibg=bg"
+exec "hi Visual       term=reverse        cterm=NONE ctermfg=".s:black   "ctermbg=".s:magenta "gui=NONE guifg=Black        guibg=DarkMagenta"
+exec "hi VisualNOS    term=bold,underline cterm=bold ctermfg=".s:white   "ctermbg=".s:cyan    "gui=NONE guifg=White        guibg=DarkCyan"
+exec "hi WarningMsg   term=standout       cterm=NONE ctermfg=".s:red     "ctermbg=".s:black   "gui=NONE guifg=DarkRed      guibg=bg"
+exec "hi WildMenu     term=standout       cterm=bold ctermfg=".s:yellow  "ctermbg=".s:blue    "gui=NONE guifg=LightYellow  guibg=DarkBlue"
+exec "hi Folded       term=standout       cterm=NONE ctermfg=".s:blue    "ctermbg=".s:black   "gui=NONE guifg=DarkBlue     guibg=bg"
+exec "hi FoldColumn   term=standout       cterm=NONE ctermfg=".s:blue    "ctermbg=".s:black   "gui=NONE guifg=DarkBlue     guibg=bg"
+exec "hi DiffAdd      term=bold           cterm=NONE ctermfg=".s:black   "ctermbg=".s:green   "gui=NONE guifg=Black        guibg=DarkGreen"
+exec "hi DiffChange   term=bold           cterm=NONE ctermfg=".s:white   "ctermbg=".s:magenta "gui=NONE guifg=LightGray    guibg=DarkMagenta"
+exec "hi DiffDelete   term=bold           cterm=NONE ctermfg=".s:red     "ctermbg=".s:red     "gui=NONE guifg=DarkRed      guibg=DarkRed"
+exec "hi DiffText     term=reverse        cterm=bold ctermfg=".s:white   "ctermbg=".s:magenta "gui=NONE guifg=White        guibg=DarkMagenta"
+exec "hi SignColumn   term=standout       cterm=bold ctermfg=".s:magenta "ctermbg=".s:black   "gui=NONE guifg=LightMagenta guibg=bg"
 " hi Cursor       
 " hi lCursor  	guifg=black 	guibg=red
 " hi CursorIM     
