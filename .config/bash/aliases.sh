@@ -178,3 +178,17 @@ then
     echo $lower
   }
 fi
+
+# Canonical file name
+# Used by the prompt command.
+if ! command -v readlink > /dev/null 2>&1
+then
+  function readlink {
+    if [ "$1" = "-f" ]
+    then
+      shift
+    fi
+    
+    (cd "$1" && pwd)
+  }
+fi
