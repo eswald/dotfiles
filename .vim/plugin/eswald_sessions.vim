@@ -25,7 +25,7 @@ function! SaveCurrentSession()
 	let lines += ['call settabvar('.(i+1).', "tabname", "'.escape(name, '"\').'")']
       endif
     endfor
-    call writefile(lines, substitute(v:this_session, '[^/]*$', 'Tab\0', ''))
+    call writefile(lines, substitute(v:this_session, '[^/\\]*$', 'Tab\0', ''))
   endif
 endfunction
 
