@@ -54,7 +54,11 @@ def digests(gitroot, params):
                 break
             
             filename = line[3:]
-            checksums[filename] = md5(open(filename).read()).hexdigest()
+            try:
+                checksums[filename] = md5(open(filename).read()).hexdigest()
+            except IOError:
+                # This usually indicates a submodule on a different commit.
+                pass
     return checksums
 
 def readcache(params):
