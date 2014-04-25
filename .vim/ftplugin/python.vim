@@ -1,4 +1,4 @@
-setlocal sts=4 sw=4 ts=8 et nowrap tw=78
+setlocal sts=4 sw=4 ts=8 et nowrap tw=98
 call EswaldCheckIndent()
 setlocal fen fdls=1 fdn=5 fdm=indent fdi=
 let python_highlight_all = 1
