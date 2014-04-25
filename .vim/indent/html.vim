@@ -70,7 +70,7 @@ endfun
 fun! <SID>HtmlIndentClose(text)
     let s = substitute(a:text, '</\@![^>]*>', '', 'g')
     if exists('b:django_blocks')
-	let s = substitute(s, '{%\s*end', '>', 'g')
+	let s = substitute(s, '{%\s*\%(end\|else\|elif\|empty\)', '>', 'g')
     endif
     let s = substitute(s, '[^>]\+', '', 'g')
     "return (mode() == 'i' && col('.') == 1) ? 0 : strlen(s)
