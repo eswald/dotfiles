@@ -1,3 +1,15 @@
+#!/bin/sh
+# Shortcut for `git diff` to work with `git ci` later.
+
+''':'
+if command -v python > /dev/null 2>&1
+then
+  exec python "$0" "$@"
+else
+  exec git diff "$@"
+fi
+'''#"""#'''
+
 #!/usr/bin/env python
 try:
     import json
