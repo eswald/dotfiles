@@ -77,7 +77,8 @@ function empties {
   find "$@" -type d -empty
 }
 
-if command -v colordiff > /dev/null 2>&1
+# This shouldn't use 'command -v' lest it catch the alias below.
+if which colordiff > /dev/null 2>&1
 then
   # Automatic colorization and paging for diffs
   function diff {
