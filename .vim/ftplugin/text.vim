@@ -14,6 +14,9 @@ vnoremap <buffer> <C-B> <C-\><C-N>g`>a*<C-\><C-N>g`<i*<C-\><C-G>
 " Typing a checkmark is hard enough without requiring the replace character command.
 nnoremap <buffer> ✓ r✓
 
+" Match an existing indent width, if we find one.
+call EswaldCheckIndent()
+
 if &keymap == "dvorak"
   "set iminsert=1
 endif 
