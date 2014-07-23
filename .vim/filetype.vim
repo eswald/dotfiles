@@ -29,4 +29,6 @@ augroup filetypedetect
   au BufRead,BufNewFile *.log			setf log
   " Example files
   au BufRead,BufNewFile ?\+.example		exe "doau filetypedetect BufRead " . expand("<afile>:r")
+  " Web Proxy Auto-Detect
+  au BufNewFile,BufRead *wpad.dat		setf javascript
 augroup END
