@@ -173,9 +173,14 @@ nnoremap - o<Space><BS><Esc>
 nnoremap _ O<Space><BS><Esc>
 
 
-" Use jk as an easy escape sequence.
+" Easy escape sequences, some for the AlphaGrip.
+" The space/backspace combo bypasses indentation removal.
 inoremap jk <Space><BS><Esc>
 inoremap JK <Space><BS><Esc>
+inoremap yc <Space><BS><Esc>
+inoremap YC <Space><BS><Esc>
+nnoremap Q <Esc>
+noremap <C-B> <Esc>
 
 " Use ,, to plug the current file's path into the command line.
 cnoremap ,, <Space><C-R>=substitute(substitute(substitute(expand('%:h'),'^\.$','',''),'.*[^/]','&/',''),'\s','\\&','g')<CR>
