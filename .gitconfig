@@ -4,6 +4,7 @@
 [alias]
 	w = !git branch -a && git log --branches --pretty=oneline --graph --decorate --since='2 months ago'
 	where = !git branch -a && git log --branches --oneline --graph --decorate --simplify-by-decoration --since='2 months ago'
+	sh = show --stat --summary
 	st = status -sb
 	co = clone
 	lg = log --graph --date-order --decorate --oneline
