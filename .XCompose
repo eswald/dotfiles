@@ -144,30 +144,68 @@
 <Multi_key> <asterisk> <0>		: "☼"	U263C # WHITE SUN WITH RAYS
 <Multi_key> <exclam> <quotedbl>		: "‼"   U203C # DOUBLE EXCLAMATION MARK
 <Multi_key> <exclam> <1>		: "‼"   U203C # DOUBLE EXCLAMATION MARK
+#<Multi_key> <exclam> <p>		: "⛏"   U26CF # PICK
+
+# ⛏  Pick
+# 🔨  Hammer
+# ⚰  Coffin
+# 🍺  Mug
+# 🌲  Evergreen Tree
+# 🌳  Deciduous Tree
+# 🍄  Mushroom
+# 🍓  Strawberry
+# 🍞  Bread
+# 🐄  Cow
+# 🐅  Tiger
+# 🐈  Cat
+# 🐉  Dragon
+# 🐑  Sheep
+# 🐘  Elephant
+# 🐝  Honeybee
+# 🐤  Baby Chick
+# 👑  Crown
+# 👻  Ghost
+# 💍  Ring
+# 💎  Gem Stone
 
 # Monographs
 <Multi_key> <e> <s> <w>			: "ᓬ⚡ᜦ" 	# CANADIAN SYLLABICS MEDIAL L, HIGH VOLTAGE SIGN, HANUNOO LETTER TA
 <Multi_key> <e> <r>			: "∑r⃑ı̂c" 	# SUMMATION, LATIN SMALL R WITH RIGHT HARPOON ABOVE, LATIN SMALL DOTLESS I WITH HAT, LATIN SMALL C
+#<Multi_key> <b> <r>			: "🍞"	U1F35E	# BREAD
 
 # Abbreviations
 <Multi_key> <0> <0>			: "0000-00-00 00:00:00" 	# MySQL zero datetime
 
 # Magic symbols, perhaps
+# Consider installing Symbola, included in the ttf-ancient-fonts package.
 <Multi_key> <m> <w>			: "☼"	U263C # WHITE SUN WITH RAYS
 #<Multi_key> <m> <u>			: "☔"	U2614 # UMBRELLA WITH RAIN DROPS
 <Multi_key> <m> <u>			: "∂"	U2202 # PARTIAL DIFFERENTIAL
+#<Multi_key> <m> <u>			: "⛆"	U26C6 # RAIN
+#<Multi_key> <m> <u>			: "🌊"	U1F30A # WATER WAVE
+#<Multi_key> <m> <u>			: "💧"	U1F4A7 # DROPLET
 <Multi_key> <m> <b>			: "☠"	U2620 # SKULL AND CROSSBONES
 <Multi_key> <m> <r>			: "⚡"	U26A1 # HIGH VOLTAGE SIGN
+#<Multi_key> <m> <r>			: "🔥"	U1F525 # FIRE
+#<Multi_key> <m> <r>			: "⛰"	U26F0 # MOUNTAIN
 #<Multi_key> <m> <g>			: "⚘"	U2698 # FLOWER
 #<Multi_key> <m> <g>			: "☨"	U2628 # CROSS OF LORRAINE
 <Multi_key> <m> <g>			: "☘"	U2618 # SHAMROCK
+#<Multi_key> <m> <g>			: "🌳"	U1F333 # DECIDUOUS TREE
 <Multi_key> <m> <s>			: "❄"	U2744 # SNOWFLAKE
 #<Multi_key> <m> <t>			: "⟳"	U27F3 # CLOCKWISE GAPPED ARROW
 <Multi_key> <m> <t>			: "↷"	U21B7 # CLOCKWISE TOP SEMICIRCLE ARROW
 <Multi_key> <m> <q>			: "↶"	U21B6 # ANTICLOCKWISE TOP SEMICIRCLE ARROW
+#<Multi_key> <m> <p>			: "⛤"	U26E4 # PENTAGRAM
 
 <Multi_key> <parenleft> <m> <w>		: "☼⃝"	# CIRCLED WHITE SUN WITH RAYS
 <Multi_key> <parenleft> <m> <u>		: "∂⃝"	# CIRCLED PARTIAL DIFFERENTIAL
+
+# Other games
+# Piecepack Ace: "🌀"	U1F300 # CYCLONE
+# "🎲"	U1F3B2 # GAME DIE
+# "🎮"	U1F3AE # VIDEO GAME
+# "🏆"	U1F3C6 # TROPHY
 
 # Greek, corresponding to the Vim digraphs
 <Multi_key> <asterisk> <a>		: "α"	U03B1 # GREEK SMALL LETTER ALPHA
