@@ -66,10 +66,10 @@ function! EswaldMovePrevTab()
   tabprev
 endfunction
 
-" For use in 'guitablabel'
-function! EswaldGuiTabLabel()
-  let label = v:lnum
-  let bufnrlist = tabpagebuflist(v:lnum)
+" For use in 'EswaldTabLine' and 'EswaldGuiTabLabel'
+function! EswaldTabLabel(tnum)
+  let label = a:tnum
+  let bufnrlist = tabpagebuflist(a:tnum)
   
   " Add '+' if one of the buffers in the tab page is modified
   for bufnr in bufnrlist
@@ -80,12 +80,44 @@ function! EswaldGuiTabLabel()
   endfor
   
   " Buffer name, with the path removed
-  if exists("t:tabname") && strlen(t:tabname)
-    let tabname = t:tabname
-  else
-    let tabname = fnamemodify(bufname(bufnrlist[tabpagewinnr(v:lnum) - 1]), ':t')
+  let tabname = gettabvar(a:tnum, "tabname")
+  if strlen(tabname) == 0
+    let tabname = fnamemodify(bufname(bufnrlist[tabpagewinnr(a:tnum) - 1]), ':t')
   endif
   
   " Append the buffer name
   return label . ' ' . tabname
 endfunction
+
+" For use in 'tabline'
+function! EswaldTabLine()
+  " Mostly from the 'tabpage' help text.
+  let s = ''
+  
+  for i in range(tabpagenr('$'))
+    " select the highlighting
+    if i + 1 == tabpagenr()
+      let s .= '%#TabLineSel#'
+    else
+      let s .= '%#TabLine#'
+    endif
+
+    " set the tab page number (for mouse clicks)
+    let s .= '%' . (i + 1) . 'T'
+
+    " the label is made by EswaldTabLabel()
+    let s .= ' %{EswaldTabLabel(' . (i + 1) . ')} '
+  endfor
+
+  " after the last tab fill with TabLineFill and reset tab page nr
+  let s .= '%#TabLineFill#%T'
+
+  return s
+endfunction
+
+" For use in 'guitablabel'
+function! EswaldGuiTabLabel()
+  return EswaldTabLabel(v:lnum)
+endfunction
+
+set tabline=%!EswaldTabLine()
