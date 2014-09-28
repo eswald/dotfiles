@@ -1,8 +1,9 @@
-setlocal ts=1 et sw=1 list nofen nowrap
+setlocal ts=1 et sts=2 sw=2 list nofen nowrap
+
 nnoremap <buffer> <space> r<space>
 vnoremap <buffer> <space> r<space>
-nnoremap <buffer> * r*
-vnoremap <buffer> * r*
+"nnoremap <buffer> * r*
+"vnoremap <buffer> * r*
 nnoremap <buffer> , r*
 vnoremap <buffer> , r*
 noremap <buffer> w W
