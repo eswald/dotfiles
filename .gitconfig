@@ -27,3 +27,5 @@
 	windowMemory = 1g
 [push]
 	default = tracking
+[diff "cp437"]
+	textconv = iconv -f cp437 -t utf8
