@@ -39,5 +39,8 @@ htmlcov
 --ignore-dir
 cache
 
+--ignore-dir
+south_migrations
+
 --ignore-file
 ext:nwc
