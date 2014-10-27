@@ -17,3 +17,5 @@ set completion-ignore-case on
 # Let underscore and hyphen match each other, too.
 set completion-map-case on
 
+# Don't complain so loudly.
+set bell-style visible
