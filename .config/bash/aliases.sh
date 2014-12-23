@@ -94,6 +94,15 @@ else
   }
 fi
 
+# Prefer icdiff over the above, when available.
+# http://www.jefftk.com/icdiff
+if command -v icdiff > /dev/null 2>&1
+then
+  function diff {
+    command icdiff "$@" | $PAGER
+  }
+fi
+
 # `bzr` is a bit too hard to type.
 complete -F _bzr -o default bar
 function bar {
