@@ -199,10 +199,12 @@ let g:EnhCommentifyUserBindings = 'yes'
 " Show as much as possible of the current window.
 set noequalalways
 set winminheight=0
-autocmd BufEnter * wincmd _
-if !&diff
-  autocmd VimEnter * all | wincmd _
-endif
+augroup eswald
+  autocmd! WinEnter * wincmd _
+  if !&diff
+    autocmd! VimEnter * all | wincmd _
+  endif
+augroup END
 
 " Show as much as possible of a very long last line.
 set display=lastline
