@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Temporarily remaps the CapsLock key to Control.
+# For permanent changes, consider setting XKBOPTIONS
+# in /etc/default/keyboard to "ctrl:nocaps" instead.
+
+set -eu
+
+# Remap for the X Window system, if available.
+if type setxkbmap >/dev/null 2>&1
+then
+  setxkbmap -layout us -option ctrl:nocaps 2>/dev/null
+fi
+
+if [ "`id -u`" = "0" ]
+then
+  (dumpkeys | grep keymaps; echo "keycode 58 = Control") | loadkeys
+else
+  echo "Run as root to remap the consoles."
+  exit 1
+fi
