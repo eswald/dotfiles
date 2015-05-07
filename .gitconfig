@@ -34,3 +34,5 @@
 [diff "mp3"]
 	textconv = id3info
 	cachetextconv = true
+[url "ssh://git@heroku.com/"]
+	insteadOf = https://git.heroku.com/
