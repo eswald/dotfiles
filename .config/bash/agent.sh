@@ -9,8 +9,8 @@ then
     source "${SSH_AGENT_CACHE}" > /dev/null
     
     # Check that the agent is still running.
-    # Consider checking the pipe, too.
-    if ! kill -0 "${SSH_AGENT_PID}" 2> /dev/null
+    # This might need to check the process name if the pid has been taken again.
+    if [ ! -S "$SSH_AUTH_SOCK" ] || ! kill -0 "$SSH_AGENT_PID" 2> /dev/null
     then
       # Looks like the SSH-Agent has died; it'll be restarted below.
       rm -f "${SSH_AGENT_CACHE}"

@@ -33,3 +33,11 @@ nnoremap <buffer> [d ?^[<space>\t]*\(def\<bar>class\<bar>import.*\<bar>from<spac
 " Blocks, instead of sentences
 nnoremap <silent> <buffer> ) :call<space>search('^\s*$\<Bar>\%$','We')<CR>
 nnoremap <silent> <buffer> ( :call<space>search('^\s*$\<Bar>\%^','Web')<CR>
+
+" Change keyword argument lines to dictionary format.
+nnoremap <silent> <buffer> <leader>d :s/\(\w\+\) *= */"\1": /<CR>
+vnoremap <silent> <buffer> <leader>d :s/\(\w\+\) *= */"\1": /<CR>
+
+" Change dictionary entries to keyword arguments.
+nnoremap <silent> <buffer> <leader>D :s/"\(\w\+\)" *: */\1 = /<CR>
+vnoremap <silent> <buffer> <leader>D :s/"\(\w\+\)" *: */\1 = /<CR>
