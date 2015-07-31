@@ -80,26 +80,30 @@ function empties {
 # This shouldn't use 'command -v' lest it catch the alias below.
 if which colordiff > /dev/null 2>&1
 then
-  # Automatic colorization and paging for diffs
-  function diff {
-    colordiff -uwr "$@" | $PAGER
-  }
+  alias cdiff=colordiff
 else
   # Avoid breaking the version control aliases below
   alias colordiff='cat'
-  
-  # Automatic paging and formatting for diffs
-  function diff {
-    command diff -uw "$@" | $PAGER
-  }
+  alias cdiff='command diff'
 fi
 
-# Prefer icdiff over the above, when available.
+# Prefer icdiff over straight diff, when available.
+# However, it can't handle directories or options.
 # http://www.jefftk.com/icdiff
 if command -v icdiff > /dev/null 2>&1
 then
   function diff {
-    command icdiff "$@" | $PAGER
+    if [ "$#" = 2 ] && [ -f "$1" ] && [ -f "$2" ]
+    then
+      command icdiff "$@" | $PAGER
+    else
+      cdiff -uwr "$@" | $PAGER
+    fi
+  }
+else
+  # Automatic paging and formatting for diffs
+  function diff {
+    command $cdiff -uwr "$@" | $PAGER
   }
 fi
 

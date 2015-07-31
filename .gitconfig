@@ -9,7 +9,8 @@
 	co = clone
 	lg = log --graph --date-order --decorate --oneline
 	le = log --graph --pretty=format:'%C(yellow)%h%Creset - %C(green)%an%C(cyan)%d%Creset %s (%cr)' --abbrev-commit --date-order --decorate
-	lgg = log --graph --pretty=format:'%C(yellow)%h%Creset -%C(auto)%d%Creset %s (%cr) <%an>' --abbrev-commit --date-order --decorate
+	lb = log --graph --pretty=format:'%C(yellow)%h%Creset - %C(cyan)<%an>%Creset%C(auto)%d%Creset %s %C(blue)(%cr)%Creset' --abbrev-commit --date-order --decorate --branches
+	lgg = log --graph --pretty=format:'%C(yellow)%h%Creset - %C(cyan)<%an>%Creset%C(auto)%d%Creset %s %C(blue)(%cr)%Creset' --abbrev-commit --date-order --decorate
 	info = log -1 --oneline
 	list = ls-files
 	ls = !git ls-files \"$@\" | less -FiRSn && :

@@ -39,5 +39,5 @@ nnoremap <silent> <buffer> <leader>d :s/\(\w\+\) *= */"\1": /<CR>
 vnoremap <silent> <buffer> <leader>d :s/\(\w\+\) *= */"\1": /<CR>
 
 " Change dictionary entries to keyword arguments.
-nnoremap <silent> <buffer> <leader>D :s/"\(\w\+\)" *: */\1 = /<CR>
-vnoremap <silent> <buffer> <leader>D :s/"\(\w\+\)" *: */\1 = /<CR>
+nnoremap <silent> <buffer> <leader>D :s/\(['"]\)\(\w\+\)\1 *: */\2 = /<CR>
+vnoremap <silent> <buffer> <leader>D :s/\(['"]\)\(\w\+\)\1 *: */\2 = /<CR>
