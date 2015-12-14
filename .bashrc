@@ -15,7 +15,7 @@ export HISTCONTROL=ignoreboth
 # ... or simply erase previous identical lines.
 export HISTCONTROL=ignorespace:erasedups
 # Ignore some controlling instructions, too.
-export HISTIGNORE="[ 	]*:&:bg:fg:exit:ls:cd"
+export HISTIGNORE="[ 	]*:&:bg:fg:exit:ls:cd:rm*"
 
 # Truly massive history file
 export HISTFILESIZE=65536
