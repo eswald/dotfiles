@@ -7,6 +7,7 @@
 	sh = show --stat --summary
 	st = status -sb
 	co = clone
+	forget = rm --cached
 	lg = log --graph --date-order --decorate --oneline
 	le = log --graph --pretty=format:'%C(yellow)%h%Creset - %C(green)%an%C(cyan)%d%Creset %s (%cr)' --abbrev-commit --date-order --decorate
 	lb = log --graph --pretty=format:'%C(yellow)%h%Creset - %C(cyan)<%an>%Creset%C(auto)%d%Creset %s %C(blue)(%cr)%Creset' --abbrev-commit --date-order --decorate --branches

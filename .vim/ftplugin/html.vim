@@ -1,6 +1,6 @@
 " Don't overwrite settings for PHP files
 if &ft == 'html'
-  setlocal ts=8 sw=2 sts=2 et tw=78
+  setlocal ts=8 sw=2 sts=2 et tw=150
 endif
 
 vnoremap <buffer> <C-U> <C-\><C-N>g`>a<lt>/u><C-\><C-N>g`<i<lt>u><C-\><C-G>

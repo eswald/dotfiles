@@ -61,4 +61,5 @@ map <buffer> <S-F12> :g/%.*/normal 0x<Return>
 setlocal dictionary-=$VIM/syntax/lilypond-words dictionary+=$VIM/syntax/lilypond-words
 setlocal complete-=k complete+=k
 "
-setlocal showmatch
+" This isn't local, and is frequently annoying.
+"setlocal showmatch

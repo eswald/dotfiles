@@ -16,6 +16,7 @@ set guioptions+=c
 set guioptions-=t
 set guioptions-=T
 set guioptions-=r
+set guioptions-=m
 
 " Until I'm done importing cassettes
 set vb t_vb=

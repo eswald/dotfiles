@@ -44,3 +44,9 @@ south_migrations
 
 --ignore-file
 ext:nwc
+
+--ignore-file
+ext:log
+
+--ignore-file
+ext:pdf

@@ -1,0 +1,42 @@
+#!/bin/sh
+
+set -eu
+
+helptext() {
+  echo 'Usage:' 1>&2
+  echo '  apt update                     Update the package index' 1>&2
+  echo '  apt search <term> ...          Search for a package' 1>&2
+  echo '  apt find <term> ...            Search for a package by name' 1>&2
+  echo '  apt show <package> ...         Show package details' 1>&2
+  echo '  apt install <package> ...      Install a package' 1>&2
+  echo '  apt apply <file>               Install a .deb file as a package' 1>&2
+  echo '  apt installed [<package> ...]  List installed packages' 1>&2
+  echo '  apt which <file>               Find the package for a file' 1>&2
+  echo '  apt list <package>             List the files in a package' 1>&2
+  echo '  apt remove <package> ...       Uninstall a package' 1>&2
+  echo '  apt autoremove                 Remove obsolete packages' 1>&2
+  exit 1
+}
+
+if [ "$#" = "0" ]
+then
+  helptext
+fi
+
+command="$1"
+shift
+
+case "$command" in
+  update)      sudo apt-get update ;;
+  search)      apt-cache search "$@" ;;
+  find)        apt-cache search --names-only "$@" ;;
+  show)        apt-cache show "$@" ;;
+  install)     sudo apt-get install --no-install-recommends "$@" ;;
+  apply)       sudo dpkg -i "$1" ;;
+  installed)   dpkg --get-selections "$@" ;;
+  which)       dpkg --search "$1" ;;
+  list)        dpkg --listfiles "$1" ;;
+  remove)      sudo apt-get remove "$@" ;;
+  autoremove)  sudo apt-get autoremove ;;
+  *)           helptext ;;
+esac

@@ -31,12 +31,12 @@ nnoremap <buffer> <F2> :!ctags %:p:h/*.py<CR>
 nnoremap <buffer> [d ?^[<space>\t]*\(def\<bar>class\<bar>import.*\<bar>from<space>.*import.*\)<space>\zs<C-R>=expand('<cword>')<CR>\><CR>
 
 " Blocks, instead of sentences
-nnoremap <silent> <buffer> ) :call<space>search('^\s*$\<Bar>\%$','We')<CR>
-nnoremap <silent> <buffer> ( :call<space>search('^\s*$\<Bar>\%^','Web')<CR>
+nnoremap <silent> <buffer> ) j:call<space>search('^\s*$\<Bar>\%$','We')<CR>
+nnoremap <silent> <buffer> ( k:call<space>search('^\s*$\<Bar>\%^','Web')<CR>
 
 " Change keyword argument lines to dictionary format.
-nnoremap <silent> <buffer> <leader>d :s/\(\w\+\) *= */"\1": /<CR>
-vnoremap <silent> <buffer> <leader>d :s/\(\w\+\) *= */"\1": /<CR>
+nnoremap <silent> <buffer> <leader>d :s/\(\w\+\) *= */'\1': /<CR>
+vnoremap <silent> <buffer> <leader>d :s/\(\w\+\) *= */'\1': /<CR>
 
 " Change dictionary entries to keyword arguments.
 nnoremap <silent> <buffer> <leader>D :s/\(['"]\)\(\w\+\)\1 *: */\2 = /<CR>

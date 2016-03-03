@@ -1,0 +1,6 @@
+#!/bin/bash
+# Corrects my common git command typo.
+
+command="$1"
+shift
+exec git "${command#t}" "$@"

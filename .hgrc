@@ -15,6 +15,7 @@ alias = ~/.config/hg-extensions/alias.py
 boundmode = ~/.config/hg-extensions/boundmode.py
 color =
 #convert =
+extdiff =
 fetch =
 graphlog =
 hgk =

@@ -45,6 +45,9 @@ sorendition "+b gM"
 # If a window goes unresponsive, don't block the whole session
 nonblock on
 
+# AlphaGrip-friendly paste mode
+bind < copy
+
 # Toggle paste mode when pasting into vim, using ^] instead of ]
 register [ "\017:set paste\015"
 register ] "\017:set nopaste\015"
