@@ -13,8 +13,6 @@
 	lb = log --graph --pretty=format:'%C(yellow)%h%Creset - %C(cyan)<%an>%Creset%C(auto)%d%Creset %s %C(blue)(%cr)%Creset' --abbrev-commit --date-order --decorate --branches
 	lgg = log --graph --date-order --decorate --oneline --branches
 	info = log -1 --oneline
-	list = ls-files
-	ls = !git ls-files \"$@\" | less -FiRSn && :
 	ignored = ls-files --others --ignored --exclude-standard --directory
 	cleanable = clean -dXn
 	uncommit = reset --soft HEAD^

@@ -1,0 +1,7 @@
+#!/bin/sh
+if [ $#@ = 0 ]
+then
+  git ls-files . | less -FiRSn
+else
+  git ls-files "$@" | less -FiRSn
+fi
