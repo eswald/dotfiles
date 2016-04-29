@@ -6,6 +6,7 @@
 	where = !git branch -a && git log --branches --oneline --graph --decorate --simplify-by-decoration --since='2 months ago'
 	sh = show --stat --summary
 	st = status -sb
+	stu = status -sb -uno
 	co = clone
 	forget = rm --cached
 	lg = log --graph --date-order --decorate --oneline
