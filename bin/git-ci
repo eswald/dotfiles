@@ -41,11 +41,11 @@ class GitCi(Application):
         gitroot, params, addfiles = readcache(paths)
         if addfiles:
             with local.cwd(gitroot):
-                git["add", "-f"][addfiles] & FG
+                git["add", "-f"][list(addfiles)] & FG
         
         try:
             git["commit"][message][params] & FG
-        except ProcessExecutionError, err:
+        except ProcessExecutionError as err:
             sys.exit(err.retcode)
 
 if __name__ == "__main__":

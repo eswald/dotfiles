@@ -36,7 +36,7 @@ def df(params):
     # Run the diff command
     try:
         git["diff"][params] & FG
-    except ProcessExecutionError, err:
+    except ProcessExecutionError as err:
         sys.exit(err.retcode)
 
 if __name__ == "__main__":

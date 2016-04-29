@@ -22,7 +22,7 @@ def findroot():
         if gitdir.isdir():
             break
         if gitroot.up() == gitroot:
-            print "fatal: Not a git repository (or any of the parent directories): .git"
+            print("fatal: Not a git repository (or any of the parent directories): .git")
             sys.exit(1)
         gitroot = gitroot.up()
     return gitroot, gitdir/"info/df-digest"
@@ -55,7 +55,7 @@ def digests(gitroot, params):
             
             filename = line[3:]
             try:
-                checksums[filename] = md5(open(filename).read()).hexdigest()
+                checksums[filename] = md5(open(filename, 'rb').read()).hexdigest()
             except IOError:
                 # This usually indicates a submodule on a different commit.
                 pass

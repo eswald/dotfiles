@@ -1,14 +1,29 @@
 import time
 import random
 import logging
-import six
+import threading
 from plumbum.commands import BaseCommand, run_proc
+from plumbum.lib import six
+from plumbum.machines.base import PopenAddons
 
 
 class ShellSessionError(Exception):
-    """Raises when something goes wrong when calling 
+    """Raises when something goes wrong when calling
     :func:`ShellSession.popen <plumbum.session.ShellSession.popen>`"""
     pass
+
+class SSHCommsError(EOFError):
+    """Raises when the communication channel can't be created on the
+    remote host or it times out."""
+
+class SSHCommsChannel2Error(SSHCommsError):
+    """Raises when channel 2 (stderr) is not available"""
+
+class IncorrectLogin(SSHCommsError):
+    """Raises when incorrect login credentials are provided"""
+
+class HostPublicKeyUnknown(SSHCommsError):
+    """Raises when the host public key isn't known"""
 
 shell_logger = logging.getLogger("plumbum.shell")
 
@@ -17,19 +32,19 @@ shell_logger = logging.getLogger("plumbum.shell")
 # Shell Session Popen
 #===================================================================================================
 class MarkedPipe(object):
-    """A pipe-like object from which you can read lines; the pipe will return report EOF (the 
+    """A pipe-like object from which you can read lines; the pipe will return report EOF (the
     empty string) when a special marker is detected"""
     __slots__ = ["pipe", "marker"]
     def __init__(self, pipe, marker):
         self.pipe = pipe
         self.marker = marker
         if six.PY3:
-            self.marker = bytes(self.marker, "ascii")
+            self.marker = six.bytes(self.marker, "ascii")
     def close(self):
         """'Closes' the marked pipe; following calls to ``readline`` will return """""
         # consume everything
         while self.readline():
-            pass 
+            pass
         self.pipe = None
     def readline(self):
         """Reads the next line from the pipe; returns "" when the special marker is reached.
@@ -45,10 +60,11 @@ class MarkedPipe(object):
         return line
 
 
-class SessionPopen(object):
+class SessionPopen(PopenAddons):
     """A shell-session-based ``Popen``-like object (has the following attributes: ``stdin``,
     ``stdout``, ``stderr``, ``returncode``)"""
-    def __init__(self, argv, isatty, stdin, stdout, stderr, encoding):
+    def __init__(self, proc, argv, isatty, stdin, stdout, stderr, encoding):
+        self.proc = proc
         self.argv = argv
         self.isatty = isatty
         self.stdin = stdin
@@ -68,8 +84,8 @@ class SessionPopen(object):
         self.communicate()
         return self.returncode
     def communicate(self, input = None):
-        """Consumes the process' stdout and stderr until the it terminates. 
-        
+        """Consumes the process' stdout and stderr until the it terminates.
+
         :param input: An optional bytes/buffer object to send to the process over stdin
         :returns: A tuple of (stdout, stderr)
         """
@@ -88,14 +104,27 @@ class SessionPopen(object):
                 input = input[1000:]
             i = (i + 1) % len(sources)
             name, coll, pipe = sources[i]
-            line = pipe.readline()
-            shell_logger.debug("%s> %r", name, line)
+            try:
+                line = pipe.readline()
+                shell_logger.debug("%s> %r", name, line)
+            except EOFError:
+                shell_logger.debug("%s> Nothing returned.", name)
+
+                self.proc.poll()
+                returncode = self.proc.returncode
+                if returncode == 5:
+                    raise IncorrectLogin("Incorrect username or password provided")
+                elif returncode == 6:
+                    raise HostPublicKeyUnknown("The authenticity of the host can't be established")
+                msg = "No communication channel detected. Does the remote exist?"
+                msgerr = "No stderr result detected. Does the remote have Bash as the default shell?"
+                raise SSHCommsChannel2Error(msgerr) if name=="2" else SSHCommsError(msg)
             if not line:
                 del sources[i]
             else:
                 coll.append(line)
         if self.isatty:
-            stdout.pop(0) # discard first line of prompt
+            stdout.pop(0)  # discard first line of prompt
         try:
             self.returncode = int(stdout.pop(-1))
         except (IndexError, ValueError):
@@ -111,26 +140,36 @@ class ShellSession(object):
     interactive shell (``/bin/sh`` or something compatible), over which you may run commands
     (sent over stdin). The output of is then read from stdout and stderr. Shell sessions are
     less "robust" than executing a process on its own, and they are susseptible to all sorts
-    of malformatted-strings attacks, and there is little benefit from using them locally. 
+    of malformatted-strings attacks, and there is little benefit from using them locally.
     However, they can greatly speed up remote connections, and are required for the implementation
-    of :class:`SshMachine <plumbum.remote_machine.SshMachine>`, as they allow us to send multiple
+    of :class:`SshMachine <plumbum.machines.remote.SshMachine>`, as they allow us to send multiple
     commands over a single SSH connection (setting up separate SSH connections incurs a high
-    overhead). Try to avoid using shell sessions, unless you know what you're doing. 
-    
+    overhead). Try to avoid using shell sessions, unless you know what you're doing.
+
     Instances of this class may be used as *context-managers*.
-    
+
     :param proc: The underlying shell process (with open stdin, stdout and stderr)
     :param encoding: The encoding to use for the shell session. If ``"auto"``, the underlying
                      process' encoding is used.
-    :param isatty: If true, assume the shell has a TTY and that stdout and stderr are unified 
+    :param isatty: If true, assume the shell has a TTY and that stdout and stderr are unified
+    :param connect_timeout: The timeout to connect to the shell, after which, if no prompt
+                            is seen, the shell process is killed
     """
-    def __init__(self, proc, encoding = "auto", isatty = False):
+    def __init__(self, proc, encoding = "auto", isatty = False, connect_timeout = 5):
         self.proc = proc
-        self.encoding = proc.encoding if encoding == "auto" else encoding  
+        self.encoding = proc.encoding if encoding == "auto" else encoding
         self.isatty = isatty
         self._current = None
+        if connect_timeout:
+            def closer():
+                shell_logger.error("Connection to %s timed out (%d sec)", proc, connect_timeout)
+                self.close()
+            timer = threading.Timer(connect_timeout, self.close)
+            timer.start()
         self.run("")
-    
+        if connect_timeout:
+            timer.cancel()
+
     def __enter__(self):
         return self
     def __exit__(self, t, v, tb):
@@ -140,11 +179,11 @@ class ShellSession(object):
             self.close()
         except Exception:
             pass
-    
+
     def alive(self):
         """Returns ``True`` if the underlying shell process is alive, ``False`` otherwise"""
         return self.proc and self.proc.poll() is None
-    
+
     def close(self):
         """Closes (terminates) the shell session"""
         if not self.alive():
@@ -165,11 +204,11 @@ class ShellSession(object):
         except EnvironmentError:
             pass
         self.proc = None
-    
+
     def popen(self, cmd):
         """Runs the given command in the shell, adding some decoration around it. Only a single
         command can be executed at any given time.
-        
+
         :param cmd: The command (string or :class:`Command <plumbum.commands.BaseCommand>` object)
                     to run
         :returns: A :class:`SessionPopen <plumbum.session.SessionPopen>` instance
@@ -178,7 +217,7 @@ class ShellSession(object):
             raise ShellSessionError("Shell session has already been closed")
         if self._current and not self._current._done:
             raise ShellSessionError("Each shell may start only one process at a time")
-        
+
         if isinstance(cmd, BaseCommand):
             full_cmd = cmd.formulate(1)
         else:
@@ -196,17 +235,17 @@ class ShellSession(object):
         shell_logger.debug("Running %r", full_cmd)
         self.proc.stdin.write(full_cmd + six.b("\n"))
         self.proc.stdin.flush()
-        self._current = SessionPopen(full_cmd, self.isatty, self.proc.stdin, 
+        self._current = SessionPopen(self.proc, full_cmd, self.isatty, self.proc.stdin,
             MarkedPipe(self.proc.stdout, marker), MarkedPipe(self.proc.stderr, marker),
             self.encoding)
         return self._current
-    
+
     def run(self, cmd, retcode = 0):
-        """Runs the given command 
-        
+        """Runs the given command
+
         :param cmd: The command (string or :class:`Command <plumbum.commands.BaseCommand>` object)
                     to run
-        :param retcode: The expected return code (0 by default). Set to ``None`` in order to 
+        :param retcode: The expected return code (0 by default). Set to ``None`` in order to
                         ignore erroneous return codes
         :returns: A tuple of (return code, stdout, stderr)
         """
