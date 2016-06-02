@@ -38,7 +38,11 @@ import tempfile
 import termios
 import textwrap
 import traceback
-import urlparse
+
+try:
+    import urlparse
+except ImportError:
+    from urllib import parse as urlparse
 
 try:
     set
@@ -98,7 +102,7 @@ class FilenameChecker(object):
     def is_free(self, filename):
         try:
             result = self.free_func(filename, *self.free_args)
-        except OSError, error:
+        except OSError as error:
             if error.errno == errno.EEXIST:
                 return False
             raise
@@ -145,7 +149,7 @@ class BaseExtractor(object):
     name_checker = DirectoryChecker
 
     def __init__(self, filename, encoding):
-        if encoding and (not self.decoders.has_key(encoding)):
+        if encoding and (encoding not in self.decoders):
             raise ValueError("unrecognized encoding %s" % (encoding,))
         self.filename = os.path.realpath(filename)
         self.encoding = encoding
@@ -159,7 +163,7 @@ class BaseExtractor(object):
         self.exit_codes = []
         try:
             self.archive = open(filename, 'r')
-        except (IOError, OSError), error:
+        except (IOError, OSError) as error:
             raise ExtractorError("could not open %s: %s" %
                                  (filename, error.strerror))
         if encoding:
@@ -174,7 +178,7 @@ class BaseExtractor(object):
             processes.append(subprocess.Popen(command, stdin=stdin,
                                               stdout=stdout,
                                               stderr=self.stderr))
-        except OSError, error:
+        except OSError as error:
             if error.errno == errno.ENOENT:
                 raise ExtractorUnusable("could not run %s" % (command[0],))
             raise
@@ -249,12 +253,12 @@ class BaseExtractor(object):
         # 2. Then remove any commonly known extension that remains.
         # 3. If neither of those did anything, remove anything that looks
         #    like it's almost certainly an extension (less than 5 chars).
-        if mimetypes.encodings_map.has_key(extension):
+        if extension in mimetypes.encodings_map:
             pieces.pop()
             extension = '.' + pieces[-1]
-        if (mimetypes.types_map.has_key(extension) or
-            mimetypes.common_types.has_key(extension) or
-            mimetypes.suffix_map.has_key(extension)):
+        if (extension in mimetypes.types_map or
+            extension in mimetypes.common_types or
+            extension in mimetypes.suffix_map):
             pieces.pop()
         if ((orig_len == len(pieces)) and
             (orig_len > 1) and (len(pieces[-1]) < 5)):
@@ -294,7 +298,7 @@ class BaseExtractor(object):
     def extract(self):
         try:
             self.target = tempfile.mkdtemp(prefix='.dtrx-', dir='.')
-        except (OSError, IOError), error:
+        except (OSError, IOError) as error:
             raise ExtractorError("cannot extract here: %s" % (error.strerror,))
         old_path = os.path.realpath(os.curdir)
         os.chdir(self.target)
@@ -340,7 +344,7 @@ class CompressionExtractor(BaseExtractor):
     def basename(self):
         pieces = os.path.basename(self.filename).split('.')
         extension = '.' + pieces[-1]
-        if mimetypes.encodings_map.has_key(extension):
+        if extension in mimetypes.encodings_map:
             pieces.pop()
         return '.'.join(pieces)
 
@@ -364,7 +368,7 @@ class CompressionExtractor(BaseExtractor):
         self.included_root = './'
         try:
             output_fd, self.target = tempfile.mkstemp(prefix='.dtrx-', dir='.')
-        except (OSError, IOError), error:
+        except (OSError, IOError) as error:
             raise ExtractorError("cannot extract here: %s" % (error.strerror,))
         self.run_pipes(output_fd)
         os.close(output_fd)
@@ -769,7 +773,7 @@ class BasePolicy(object):
         for choice in self.choices:
             question.extend(self.choice_wrapper.wrap(choice))
         while True:
-            print "\n".join(question)
+            print("\n".join(question))
             try:
                 answer = raw_input(self.prompt)
             except EOFError:
@@ -777,7 +781,7 @@ class BasePolicy(object):
             try:
                 return self.answers[answer.lower()]
             except KeyError:
-                print
+                print("")
 
     def wrap(self, question, *args):
         words = question.split()
@@ -976,7 +980,7 @@ class ExtractorBuilder(object):
 
     def build_extractor(self, archive_type, encoding):
         type_info = self.extractor_map[archive_type]
-        if self.options.metadata and type_info.has_key('metadata'):
+        if self.options.metadata and 'metadata' in type_info:
             extractors = type_info['metadata']
         else:
             extractors = type_info['extractors']
@@ -1058,7 +1062,7 @@ class BaseAction(object):
     def report(self, function, *args):
         try:
             error = function(*args)
-        except EXTRACTION_ERRORS, exception:
+        except EXTRACTION_ERRORS as exception:
             error = str(exception)
             logger.debug(''.join(traceback.format_exception(*sys.exc_info())))
         return error
@@ -1067,10 +1071,10 @@ class BaseAction(object):
         if len(self.filenames) < 2:
             return
         elif self.do_print:
-            print
+            print('')
         else:
             self.do_print = True
-        print "%s:" % (filename,)
+        print("%s:" % (filename,))
 
 
 class ExtractionAction(BaseAction):
@@ -1092,7 +1096,7 @@ class ExtractionAction(BaseAction):
             return
         self.show_filename(self.current_filename)
         if extractor.contents is None:
-            print self.current_handler.target
+            print(self.current_handler.target)
             return
         def reverser(x, y):
             return cmp(y, x)
@@ -1106,13 +1110,13 @@ class ExtractionAction(BaseAction):
         while filenames:
             filename = filenames.pop()
             if isdir(filename):
-                print "%s/" % (filename,)
+                print("%s/" % (filename,))
                 new_filenames = os.listdir(filename)
                 new_filenames.sort(reverser)
                 filenames.extend([pathjoin(filename, new_filename)
                                   for new_filename in new_filenames])
             else:
-                print filename
+                print(filename)
 
     def run(self, filename, extractor):
         self.current_filename = filename
@@ -1137,9 +1141,9 @@ class ListAction(BaseAction):
         else:
             self.did_list = True
             self.show_filename(filename)
-            print first_line
+            print(first_line)
         for line in filename_lister:
-            print line
+            print(line)
             
     def run(self, filename, extractor):
         self.did_list = False
@@ -1163,13 +1167,13 @@ class ExtractorApplication(object):
     def clean_destination(self, dest_name):
         try:
             os.unlink(dest_name)
-        except OSError, error:
+        except OSError as error:
             if error.errno == errno.EISDIR:
                 shutil.rmtree(dest_name, ignore_errors=True)
 
     def abort(self, signal_num, frame):
         signal.signal(signal_num, signal.SIG_IGN)
-        print
+        print('')
         logger.debug("traceback:\n" +
                      ''.join(traceback.format_stack(frame)).rstrip())
         logger.debug("got signal %s" % (signal_num,))
@@ -1262,7 +1266,7 @@ class ExtractorApplication(object):
     def check_file(self, filename):
         try:
             result = os.stat(filename)
-        except OSError, error:
+        except OSError as error:
             return error.strerror
         if stat.S_ISDIR(result.st_mode):
             return "cannot work with a directory"
@@ -1318,7 +1322,7 @@ class ExtractorApplication(object):
             action = ListAction
         else:
             action = ExtractionAction
-        self.action = action(self.options, self.archives.values()[0])
+        self.action = action(self.options, list(self.archives.values())[0])
         while self.archives:
             self.current_directory, self.filenames = self.archives.popitem()
             os.chdir(self.current_directory)
