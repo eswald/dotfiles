@@ -19,6 +19,7 @@
     
     bright="\[\e[1m\]"
     red="\[\e[1;31m\]"
+    grey="\[\e[1;30m\]"
     blue="\[\e[0;34m\]"
     cyan="\[\e[0;36m\]"
     green="\[\e[0;32m\]"
@@ -92,13 +93,13 @@
     gitcode=""
     until [ "$gitdir" -ef / ]; do
       if [ -f "$gitdir/.git/HEAD" ]; then
-	head=$(< "$gitdir/.git/HEAD")
+	head=$(git name-rev --name-only HEAD)
 	gitdir="$(readlink -f "$gitdir")"
 	gitlabel="git:${gitdir##/*/}"
-	if [[ $head == ref:\ refs/heads/* ]]; then
-	  gitcode=" $blue($gitlabel ${head#*/*/})"
-	elif [[ $head != '' ]]; then
+	if [[ $head == 'master' ]]; then
 	  gitcode=" $blue($gitlabel $head)"
+	elif [[ $head != '' ]]; then
+	  gitcode=" $blue($gitlabel $grey$head$blue)"
 	else
 	  gitcode=" $blue($gitlabel)"
 	fi
