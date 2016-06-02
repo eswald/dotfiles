@@ -89,13 +89,16 @@
     
     # Find the git directory and branch, if any.
     # __git_ps1 proved to be far too slow in some situations.
-    gitdir=.
+    gitdir="$(git rev-parse --show-toplevel 2>/dev/null || true)"
     gitcode=""
-    until [ "$gitdir" -ef / ]; do
-      if [ -f "$gitdir/.git/HEAD" ]; then
-	head=$(git name-rev --name-only HEAD)
-	gitdir="$(readlink -f "$gitdir")"
-	gitlabel="git:${gitdir##/*/}"
+    if [ -n "$gitdir" ]; then
+	head="$(git name-rev --name-only HEAD)"
+	if [[ $gitdir == "$PWD" ]]; then
+	  gitlabel="git:${gitdir##/*/}"
+	else
+	  gitlabel="git:$grey${gitdir##/*/}$blue"
+	fi
+	
 	if [[ $head == 'master' ]]; then
 	  gitcode=" $blue($gitlabel $head)"
 	elif [[ $head != '' ]]; then
@@ -103,10 +106,7 @@
 	else
 	  gitcode=" $blue($gitlabel)"
 	fi
-	break
-      fi
-      gitdir="../$gitdir"
-    done
+    fi
     
     # Merge history with other shells.
     # It might be nice to pipe history stright into the python, instead of doing this file dance,
