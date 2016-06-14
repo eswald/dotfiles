@@ -92,20 +92,23 @@
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null || true)"
     gitcode=""
     if [ -n "$gitdir" ]; then
-	head="$(git name-rev --name-only HEAD)"
-	if [[ $gitdir == "$PWD" ]]; then
-	  gitlabel="git:${gitdir##/*/}"
+	head="$(git rev-parse --abbrev-ref HEAD)"
+	current="$(readlink -e .)"
+	if [[ "$gitdir" == "$current" ]]; then
+	  gitlabel="${gitdir##/*/}"
 	else
-	  gitlabel="git:$grey${gitdir##/*/}$blue"
+	  gitlabel="$grey${gitdir##/*/}"
 	fi
 	
-	if [[ $head == 'master' ]]; then
-	  gitcode=" $blue($gitlabel $head)"
-	elif [[ $head != '' ]]; then
-	  gitcode=" $blue($gitlabel $grey$head$blue)"
-	else
-	  gitcode=" $blue($gitlabel)"
+	if [[ "$head" == 'master' ]]; then
+	  githead="$blue$head"
+	elif [[ "$head" == 'HEAD' ]]; then
+	  githead="$red$head$blue"
+	elif [ -n "$head" ]; then
+	  githead="$grey$head$blue"
 	fi
+	
+	gitcode=" $blue(git:$gitlabel $githead)"
     fi
     
     # Merge history with other shells.
