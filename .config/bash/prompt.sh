@@ -93,11 +93,10 @@
     gitcode=""
     if [ -n "$gitdir" ]; then
 	head="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
-	current="$(readlink -e .)"
-	if [[ "$gitdir" == "$current" ]]; then
-	  gitlabel="${gitdir##/*/}"
+	if [ "$(cd "$gitdir" && pwd -P)" = "$(pwd -P)" ]; then
+	  gitlabel="${gitdir##*/}"
 	else
-	  gitlabel="$grey${gitdir##/*/}"
+	  gitlabel="$grey${gitdir##*/}"
 	fi
 	
 	if [[ "$head" == 'master' ]]; then
