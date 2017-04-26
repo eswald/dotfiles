@@ -31,8 +31,10 @@ nnoremap <buffer> <F2> :!ctags %:p:h/*.py<CR>
 nnoremap <buffer> [d ?^[<space>\t]*\(def\<bar>class\<bar>import.*\<bar>from<space>.*import.*\)<space>\zs<C-R>=expand('<cword>')<CR>\><CR>
 
 " Blocks, instead of sentences
-nnoremap <silent> <buffer> ) j:call<space>search('^\s*$\<Bar>\%$','We')<CR>
-nnoremap <silent> <buffer> ( k:call<space>search('^\s*$\<Bar>\%^','Web')<CR>
+noremap <silent> <buffer> ) :call<space>EswaldNextUnfoldedBlankLine(mode())<CR>
+noremap <silent> <buffer> ( :call<space>EswaldPrevUnfoldedBlankLine(mode())<CR>
+vnoremap <silent> <buffer> ) :<C-U>call<space>EswaldNextUnfoldedBlankLine('v')<CR>
+vnoremap <silent> <buffer> ( :<C-U>call<space>EswaldPrevUnfoldedBlankLine('v')<CR>
 
 " Change keyword argument lines to dictionary format.
 nnoremap <silent> <buffer> <leader>d :s/\(\w\+\) *= */'\1': /<CR>

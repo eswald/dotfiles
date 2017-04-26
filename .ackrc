@@ -42,6 +42,9 @@ cache
 --ignore-dir
 south_migrations
 
+--ignore-dir
+node_modules
+
 --ignore-file
 ext:nwc
 
@@ -50,3 +53,15 @@ ext:log
 
 --ignore-file
 ext:pdf
+
+--ignore-file
+ext:map
+
+--ignore-file
+is:app.js
+
+--ignore-file
+is:lib.js
+
+--ignore-file
+is:jquery.js

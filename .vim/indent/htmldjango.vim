@@ -25,9 +25,9 @@ call <SID>TagPush('spaceless')
 call <SID>TagPush('verbatim')
 call <SID>TagPush('with')
 
-delfun <SID>TagPush
-
 " Django tags that both close and open a block.
-" empty
-" elif
-" else
+call <SID>TagPush('empty')
+call <SID>TagPush('elif')
+call <SID>TagPush('else')
+
+delfun <SID>TagPush

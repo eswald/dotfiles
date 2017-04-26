@@ -2,6 +2,9 @@ set nocompatible
 set encoding=utf-8
 set fileencodings=ucs-bom,utf-8,default,cp1252
 
+" Add directories in the bundle directory to runtimepath.
+execute pathogen#infect()
+
 " Work with my standard file types.
 let g:filetype_w='wierd'
 let g:filetype_inc = 'php'
@@ -75,6 +78,11 @@ vnoremap <Leader>fR c<C-O>:set ri!<CR><C-R>"<Esc>:set ri!<CR>
 " Swapping paragraphs and words
 nnoremap zP {dap}p{
 nnoremap <silent> zw "_yiw:s/\(\%#\w\+\)\(\_W\+\)\(\w\+\)/\3\2\1/<CR><C-O>
+
+" Stay in visual mode when indenting/dedenting.
+" https://blog.petrzemek.net/2016/04/06/things-about-vim-i-wish-i-knew-earlier/
+vnoremap < <gv
+vnoremap > >gv
 
 " Go URL (Yes, this intentionally leaves the user on the command line.)
 nmap gw :!w3m <C-R><C-A>
@@ -151,6 +159,9 @@ nnoremap gP viW"wp
 nnoremap gy <C-\><C-N>"wyiw
 nnoremap gp viw"wp
 
+" Paste like the Terminal
+inoremap <C-S-V> <C-R>+
+
 " Easier tag finding
 "nnoremap <CR> <C-]>
 
@@ -165,8 +176,8 @@ nnoremap ; ylph
 " Quick insertion of a single character.
 " Lower-case t inserts before the cursor, upper-case T after.
 "nnoremap t "='<Space>'<CR>Pr
-nnoremap t i<Space><Esc>r
-nnoremap T a<Space><Esc>r
+nnoremap t i<Space><Esc>:undojoin<CR>r
+nnoremap T a<Space><Esc>:undojoin<CR>r
 
 " Quick insertion of a single line.
 nnoremap - o<Space><BS><Esc>
@@ -176,9 +187,9 @@ nnoremap _ O<Space><BS><Esc>
 " Easy escape sequences, some for the AlphaGrip.
 " The space/backspace combo bypasses indentation removal.
 inoremap jk <Space><BS><Esc>
-inoremap JK <Space><BS><Esc>
+inoremap JK <Esc>
 inoremap yc <Space><BS><Esc>
-inoremap YC <Space><BS><Esc>
+inoremap YC <Esc>
 nnoremap Q <Esc>
 noremap <C-B> <Esc>
 
@@ -232,3 +243,7 @@ function! s:getSyntax(bline, bcol)
     return 'No filetype defined'
   endif
 endf
+
+" Toggle one-line vs. multi-line function calls.
+nnoremap <silent> <leader>w :ArgWrap<CR>
+let g:argwrap_tail_comma = 1

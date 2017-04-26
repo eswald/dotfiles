@@ -8,11 +8,13 @@ helptext() {
   echo '  apt search <term> ...          Search for a package' 1>&2
   echo '  apt find <term> ...            Search for a package by name' 1>&2
   echo '  apt show <package> ...         Show package details' 1>&2
+  echo '  apt download <package> ...     Download package files' 1>&2
   echo '  apt install <package> ...      Install a package' 1>&2
   echo '  apt apply <file>               Install a .deb file as a package' 1>&2
   echo '  apt installed [<package> ...]  List installed packages' 1>&2
   echo '  apt which <file>               Find the package for a file' 1>&2
   echo '  apt list <package>             List the files in a package' 1>&2
+  echo '  apt why <package>              Determine why a package is installed' 1>&2
   echo '  apt remove <package> ...       Uninstall a package' 1>&2
   echo '  apt autoremove                 Remove obsolete packages' 1>&2
   exit 1
@@ -26,11 +28,19 @@ fi
 command="$1"
 shift
 
+why_packages() {
+  for pkg in "$@"
+  do
+    aptitude why "$pkg" || true
+  done
+}
+
 case "$command" in
   update)      sudo apt-get update ;;
   search)      apt-cache search "$@" ;;
   find)        apt-cache search --names-only "$@" ;;
   show)        apt-cache show "$@" ;;
+  download)    sudo apt-get install --no-install-recommends --download-only "$@" ;;
   install)     sudo apt-get install --no-install-recommends "$@" ;;
   apply)       sudo dpkg -i "$1" ;;
   installed)   dpkg --get-selections "$@" ;;
@@ -38,5 +48,6 @@ case "$command" in
   list)        dpkg --listfiles "$1" ;;
   remove)      sudo apt-get remove "$@" ;;
   autoremove)  sudo apt-get autoremove ;;
+  why)         why_packages "$@" ;;
   *)           helptext ;;
 esac

@@ -2,6 +2,9 @@
 # Global packages should be installed by the system package manager.
 export PIP_REQUIRE_VIRTUALENV=true
 
+# Consider a custom startup file:
+# http://www.jasonamyers.com//2017/default-to-pprint-python-repl/
+
 # Unbuffered python, in a custom environment
 export PYTHONUNBUFFERED=1
 if [ -f "$HOME/.python/bin/activate" ]; then

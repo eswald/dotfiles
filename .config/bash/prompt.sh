@@ -92,7 +92,7 @@
     gitdir="$(git rev-parse --show-toplevel 2>/dev/null || true)"
     gitcode=""
     if [ -n "$gitdir" ]; then
-	head="$(git rev-parse --abbrev-ref HEAD)"
+	head="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 	current="$(readlink -e .)"
 	if [[ "$gitdir" == "$current" ]]; then
 	  gitlabel="${gitdir##/*/}"
