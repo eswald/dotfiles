@@ -51,6 +51,9 @@ migrations
 --ignore-dir
 _CPack_Packages
 
+--ignore-dir
+node_modules
+
 --ignore-file
 ext:nwc
 

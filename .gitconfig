@@ -2,30 +2,31 @@
 	name = Eric Wald
 	email = eswald@gmail.com
 [alias]
-	w = !git branch -a && git log --branches --pretty=oneline --graph --decorate --since='2 months ago'
+	w = !git branch -a && git log --branches --abbrev-commit --graph --decorate --since='2 months ago'
 	where = !git branch -a && git log --branches --oneline --graph --decorate --simplify-by-decoration --since='2 months ago'
-	sh = show --stat --summary
+	sh = show --stat --summary --format=medium
 	st = status -sb
 	stu = status -sb -uno
 	co = clone
 	forget = rm --cached
-	lg = log --graph --date-order --decorate --oneline
-	le = log --graph --pretty=format:'%C(yellow)%h%Creset - %C(green)%an%C(cyan)%d%Creset %s (%cr)' --abbrev-commit --date-order --decorate
-	lb = log --graph --pretty=format:'%C(yellow)%h%Creset - %C(cyan)<%an>%Creset%C(auto)%d%Creset %s %C(blue)(%cr)%Creset' --abbrev-commit --date-order --decorate --branches
-	lgg = log --graph --date-order --decorate --oneline --branches
+	lg = log --graph --abbrev-commit --date-order --decorate
+	lb = log --graph --abbrev-commit --date-order --decorate --branches
 	info = log -1 --oneline
 	ignored = ls-files --others --ignored --exclude-standard --directory
+	untracked = ls-files --others --exclude-standard --directory
 	cleanable = clean -dXn
 	uncommit = reset --soft HEAD^
+	unpushed = log --graph --abbrev-commit --date-order --decorate --branches --not --remotes
 	unstage = reset HEAD --
 	cached = diff --cached
 	dc = diff --cached
 	ds = diff --staged
-	glog = log --graph --date-order --pretty=format:\"%h %ae: %s\" --decorate --abbrev-commit
 [core]
 	excludesfile = ~/.config/gitignore
 [color]
 	ui = auto
+[format]
+	pretty = format:%C(yellow)%h%Creset - %C(cyan)<%an>%Creset%C(auto)%d%Creset %s %C(blue)(%cr)%Creset
 [pack]
 	windowMemory = 1g
 [push]

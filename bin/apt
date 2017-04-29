@@ -14,6 +14,7 @@ helptext() {
   echo '  apt installed [<package> ...]  List installed packages' 1>&2
   echo '  apt which <file>               Find the package for a file' 1>&2
   echo '  apt list <package>             List the files in a package' 1>&2
+  echo '  apt why <package>              Determine why a package is installed' 1>&2
   echo '  apt remove <package> ...       Uninstall a package' 1>&2
   echo '  apt autoremove                 Remove obsolete packages' 1>&2
   exit 1
@@ -26,6 +27,13 @@ fi
 
 command="$1"
 shift
+
+why_packages() {
+  for pkg in "$@"
+  do
+    aptitude why "$pkg" || true
+  done
+}
 
 case "$command" in
   update)      sudo apt-get update ;;
@@ -40,5 +48,6 @@ case "$command" in
   list)        dpkg --listfiles "$1" ;;
   remove)      sudo apt-get remove "$@" ;;
   autoremove)  sudo apt-get autoremove ;;
+  why)         why_packages "$@" ;;
   *)           helptext ;;
 esac

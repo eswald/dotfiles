@@ -105,6 +105,7 @@ fun! <SID>HtmlIndentSum(lnum, state)
 	let pattern = '</[^>]*>'
 	if exists('b:django_blocks')
 	    let pattern = pattern . '\|\s*{%\s*end\w*\s*%}'
+	    "let pattern = pattern . '\|\s*{%\s*\%(end\w*\|else\|elif\|empty\)\s*%}'
 	endif
 	let part = <SID>HtmlIndentStrpart(text, pattern, a:state)
 	return <SID>HtmlIndentOpen(part) - <SID>HtmlIndentClose(part)
