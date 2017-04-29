@@ -5,9 +5,15 @@ set sessionoptions-=winsize
 set sessionoptions-=curdir
 set sessionoptions-=folds
 set sessionoptions-=help
-set sessionoptions+=winpos
-set sessionoptions+=resize
 set sessionoptions+=tabpages
+
+if has("gui_running")
+  set sessionoptions+=winpos
+  set sessionoptions+=resize
+else
+  set sessionoptions-=winpos
+  set sessionoptions-=resize
+endif
 
 function! SaveCurrentSession()
   " Save the session, if one has loaded,

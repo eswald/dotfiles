@@ -57,17 +57,23 @@ def mergelines(eternal, bash_file):
     lines.reverse()
     for line in lines:
         if line in lineset:
+            if '\x00' in line or '\x03' in line or '\x1A' in line:
+                # A sudden power outage corrupted the history file.
+                # This doesn't weed out everything, but it takes care of the bulk.
+                continue
             newlist.append(line)
             lineset.remove(line)
     newlist.reverse()
     
     # Write the history lines back out.
     # Use a file lock to avoid corruption on script contention.
-    f = open(eternal, 'w')
+    tmpname = eternal + '~'
+    f = open(tmpname, 'w')
     fcntl.flock(f.fileno(), fcntl.LOCK_EX)
     f.writelines(newlist)
     fcntl.flock(f.fileno(), fcntl.LOCK_UN)
     f.close()
+    os.rename(tmpname, eternal)
     
     # Replace the bash history file
     shutil.copyfile(eternal, bash_file)

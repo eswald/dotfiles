@@ -28,6 +28,9 @@ Zend
 .deps
 
 --ignore-dir
+node_modules
+
+--ignore-dir
 sandbox
 
 --ignore-dir
@@ -42,6 +45,12 @@ cache
 --ignore-dir
 south_migrations
 
+--ignore-dir
+migrations
+
+--ignore-dir
+_CPack_Packages
+
 --ignore-file
 ext:nwc
 
@@ -50,3 +59,18 @@ ext:log
 
 --ignore-file
 ext:pdf
+
+--ignore-file
+ext:map
+
+--ignore-file
+is:all.csv
+
+--ignore-file
+is:app.js
+
+--ignore-file
+is:lib.js
+
+--ignore-file
+is:jquery.js

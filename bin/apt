@@ -8,6 +8,7 @@ helptext() {
   echo '  apt search <term> ...          Search for a package' 1>&2
   echo '  apt find <term> ...            Search for a package by name' 1>&2
   echo '  apt show <package> ...         Show package details' 1>&2
+  echo '  apt download <package> ...     Download a package for later installation' 1>&2
   echo '  apt install <package> ...      Install a package' 1>&2
   echo '  apt apply <file>               Install a .deb file as a package' 1>&2
   echo '  apt installed [<package> ...]  List installed packages' 1>&2
@@ -28,9 +29,10 @@ shift
 
 case "$command" in
   update)      sudo apt-get update ;;
-  search)      apt-cache search "$@" ;;
+  search)      apt-cache search "$@" | less;;
   find)        apt-cache search --names-only "$@" ;;
   show)        apt-cache show "$@" ;;
+  download)    sudo apt-get install --no-install-recommends --download-only "$@" ;;
   install)     sudo apt-get install --no-install-recommends "$@" ;;
   apply)       sudo dpkg -i "$1" ;;
   installed)   dpkg --get-selections "$@" ;;

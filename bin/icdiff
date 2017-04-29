@@ -543,6 +543,9 @@ def diff_files(options, a, b):
     if head != 0:
         lines_a = lines_a[:head]
         lines_b = lines_b[:head]
+    
+    lines_a = [decode(line) for line in lines_a]
+    lines_b = [decode(line) for line in lines_b]
 
     cd = ConsoleDiff(cols=int(options.cols),
                      show_all_spaces=options.show_all_spaces,
@@ -553,8 +556,32 @@ def diff_files(options, a, b):
             lines_a, lines_b, headers[0], headers[1],
             context=(not options.whole_file),
             numlines=int(options.numlines)):
-        print(line)
+        print(line.encode("utf-8"))
         sys.stdout.flush()
+
+def decode(line):
+    r'''Decode the given string to Unicode.
+        Assumes UTF-8, falling back to Windows-1252 if necessary.
+    '''#"""#'''
+    try:
+        result = line.decode("utf-8")
+    except UnicodeDecodeError:
+        try:
+            result = line.decode("cp1252")
+        except UnicodeDecodeError:
+            result = line.decode("cp437")
+    
+    # Dumb down smart quotes and such.
+    #result = result.replace(u"\u2013", '-')
+    #result = result.replace(u"\u2014", ' -- ')
+    #result = result.replace(u"  --  ", ' -- ')
+    #result = result.replace(u'\u2018', "'")
+    #result = result.replace(u'\u2019', "'")
+    #result = result.replace(u"\u201c", '"')
+    #result = result.replace(u"\u201d", '"')
+    #result = result.replace(u"\u2122", '(TM)')
+    #result = result.replace(u"\u00ae", '(R)')
+    return result
 
 if __name__ == "__main__":
     try:
