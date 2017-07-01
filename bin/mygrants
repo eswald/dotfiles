@@ -1,5 +1,5 @@
 #!/bin/bash
-mysql -B -N "$@" -e "SELECT DISTINCT CONCAT(\"SHOW GRANTS FOR '\", user, \"'@'\", host, \"';\") AS query FROM mysql.user WHERE host rlike '^[0-9.]*%$|localhost' ORDER BY user, host" | \
+mysql -B -N "$@" -e "SELECT CONCAT(\"SHOW GRANTS FOR '\", user, \"'@'\", host, \"';\") AS query FROM mysql.user WHERE host rlike '^[0-9.]*%$|localhost' ORDER BY user, host" | \
   mysql "$@" | \
   perl -lx "$0"
 exit
