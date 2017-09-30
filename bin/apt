@@ -31,7 +31,12 @@ shift
 why_packages() {
   for pkg in "$@"
   do
-    aptitude why "$pkg" || true
+    if command -v aptitude > /dev/null 2>&1
+    then
+      aptitude why "$pkg" || true
+    else
+      apt-cache --installed rdepends "$pkg"
+    fi
   done
 }
 

@@ -206,3 +206,13 @@ then
     (cd "$1" && pwd)
   }
 fi
+
+# Use python3 as python if necessary.
+# (This could be switched to use python3 by default...)
+if ! command -v python > /dev/null 2>&1
+then
+  if command -v python3 > /dev/null 2>&1
+  then
+    alias python=python3
+  fi
+fi
