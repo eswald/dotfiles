@@ -23,3 +23,7 @@ ignored = ~/.config/hg-extensions/ignored.py
 info = ~/.config/hg-extensions/info.py
 mq =
 pager =
+
+[extdiff]
+cmd.kpdiff = sh
+opts.kpdiff = -c '~/bin/kpdiff "$0" "$1" | colordiff'
