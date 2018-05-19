@@ -59,8 +59,8 @@ class ConsoleDiff(object):
 
     """
 
-    def __init__(self, tabsize=8, wrapcolumn=None, linejunk=None,
-                 charjunk=difflib.IS_CHARACTER_JUNK, cols=80,
+    def __init__(self, tabsize=8,
+                 cols=80,
                  line_numbers=False,
                  show_all_spaces=False,
                  highlight=False,
@@ -69,11 +69,7 @@ class ConsoleDiff(object):
 
         Arguments:
         tabsize -- tab stop spacing, defaults to 8.
-        wrapcolumn -- column number where lines are broken and wrapped,
-            defaults to None where lines are not wrapped.
-        linejunk, charjunk -- keyword arguments passed into ndiff() (used by
-            ConsoleDiff() to generate the side by side differences).  See
-            ndiff() documentation for argument default values and descriptions.
+        cols -- width of the screen
         """
 
         self._tabsize = tabsize
@@ -83,15 +79,10 @@ class ConsoleDiff(object):
         self.highlight = highlight
         self.no_bold = no_bold
 
-        if wrapcolumn is None:
-            if not line_numbers:
-                wrapcolumn = self.cols // 2 - 2
-            else:
-                wrapcolumn = self.cols // 2 - 10
-
+        wrapcolumn = cols // 2 - 2
+        if line_numbers:
+            wrapcolumn -= 8
         self._wrapcolumn = wrapcolumn
-        self._linejunk = linejunk
-        self._charjunk = charjunk
 
 
     def _tab_newline_replace(self, fromlines, tolines):
@@ -294,12 +285,11 @@ class ConsoleDiff(object):
         fromlines, tolines = self._tab_newline_replace(fromlines, tolines)
 
         # create diffs iterator which generates side by side from/to data
-        diffs = difflib._mdiff(fromlines, tolines, context_lines, linejunk=self._linejunk,
-                               charjunk=self._charjunk)
+        diffs = difflib._mdiff(fromlines, tolines, context_lines, linejunk=None,
+                               charjunk=difflib.IS_CHARACTER_JUNK)
 
         # set up iterator to wrap lines that exceed desired width
-        if self._wrapcolumn:
-            diffs = self._line_wrapper(diffs)
+        diffs = self._line_wrapper(diffs)
         diffs = self._collect_lines(diffs)
 
         for left, right in self._generate_table(fromdesc, todesc, diffs):
