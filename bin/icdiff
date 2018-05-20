@@ -2,10 +2,11 @@
 
 """ icdiff.py
 
-Author: Jeff Kaufman, derived from difflib.HtmlDiff
+Authors: Jeff Kaufman and Eric Wald,
+         loosely derived from difflib.HtmlDiff
 
-License: This code is usable under the same open terms as the rest of
-         python.  See: http://www.python.org/psf/license/
+License: This code is usable under the PSF License Agreement.
+         See: http://www.python.org/psf/license/
 
 """
 
@@ -17,6 +18,7 @@ import optparse
 import re
 import filecmp
 import unicodedata
+import collections
 
 color_codes = {
     "red":     '\033[0;31m',
@@ -64,28 +66,47 @@ class ConsoleDiff(object):
                  line_numbers=False,
                  show_all_spaces=False,
                  highlight=False,
-                 no_bold=False):
+                 no_bold=False,
+                 context=False,
+                 numlines=5):
         """ConsoleDiff instance initializer
 
         Arguments:
         tabsize -- tab stop spacing, defaults to 8.
         cols -- width of the screen
+        context -- set to True for contextual differences (defaults to False
+            which shows full differences).
+        numlines -- number of context lines.  When context is set True,
+            controls number of lines displayed before and after the change.
+            When context is False, controls the number of lines to place
+            the "next" link anchors before the next change (so click of
+            "next" link jumps to just before the change).
         """
 
         self._tabsize = tabsize
         self.line_numbers = line_numbers
-        self.cols = cols
         self.show_all_spaces = show_all_spaces
         self.highlight = highlight
         self.no_bold = no_bold
 
-        wrapcolumn = cols // 2 - 2
         if line_numbers:
-            wrapcolumn -= 8
-        self._wrapcolumn = wrapcolumn
+            self.prefix = 5
+        else:
+            self.prefix = 1
+        
+        # Columns per side
+        self.cols = (cols - 1) // 2
+        
+        # Columns available for text
+        self._wrapcolumn = self.cols - (self.prefix + 1)
+        
+        if context:
+            self.context_lines = numlines
+        else:
+            self.context_lines = None
 
 
-    def _tab_newline_replace(self, fromlines, tolines):
+    def _tab_newline_replace(self, line):
         """Returns from/to line lists with tabs expanded and newlines removed.
 
         Instead of tab characters being replaced by the number of spaces
@@ -95,18 +116,14 @@ class ConsoleDiff(object):
         spaces and vice versa.  At the end of the table generation, the tab
         characters will be replaced with a space.
         """
-        def expand_tabs(line):
-            # hide real spaces
-            line = line.replace(' ', '\0')
-            # expand tabs into spaces
-            line = line.expandtabs(self._tabsize)
-            # relace spaces from expanded tabs back into tab characters
-            # (we'll replace them with markup after we do differencing)
-            line = line.replace(' ', '\t')
-            return line.replace('\0', ' ').rstrip('\n')
-        fromlines = [expand_tabs(line) for line in fromlines]
-        tolines = [expand_tabs(line) for line in tolines]
-        return fromlines, tolines
+        # hide real spaces
+        line = line.replace(' ', '\0')
+        # expand tabs into spaces
+        line = line.expandtabs(self._tabsize)
+        # relace spaces from expanded tabs back into tab characters
+        # (we'll replace them with markup after we do differencing)
+        line = line.replace(' ', '\t')
+        return line.replace('\0', ' ')
 
     def _display_len(self, s):
         # Handle wide characters like chinese.
@@ -117,7 +134,7 @@ class ConsoleDiff(object):
 
         return sum(width(c) for c in s)
 
-    def _split_line(self, data_list, line_num, text):
+    def _split_line(self, line_num, text):
         """Builds list of text lines by splitting text lines at wrap point
 
         This function will determine if the input text line needs to be
@@ -126,115 +143,109 @@ class ConsoleDiff(object):
         text line list.  This function is used recursively to handle
         the second part of the split line to further split it.
         """
-        # if blank line or context separator, just add it to the output list
-        if not line_num:
-            data_list.append((line_num, text))
-            return
-
-        # if line text doesn't need wrapping, just add it to the output list
-        size = self._display_len(text)
-        if (size <= self._wrapcolumn) or ((size - (text.count('\0') * 3)) <= self._wrapcolumn):
-            data_list.append((line_num, text))
-            return
-
-        # scan text looking for the wrap point, keeping track if the wrap
-        # point is inside markers
-        i = 0
-        n = 0
-        mark = ''
-        while n < self._wrapcolumn and i < size:
-            if text[i] == '\0':
-                i += 1
-                mark = text[i]
-                i += 1
-            elif text[i] == '\1':
-                i += 1
-                mark = ''
+        
+        for number, line in enumerate(text.splitlines()):
+            if self.line_numbers:
+                line_id = line_num + number
             else:
-                i += 1
-                n += self._display_len(text[i])
+                # Highlight a space for each line.
+                line_id = ' '
+            
+            while True:
+                # if line text doesn't need wrapping, just add it to the output list
+                size = self._display_len(line)
+                if (size <= self._wrapcolumn) or ((size - (line.count('\0') * 3)) <= self._wrapcolumn):
+                    yield line_id, line
+                    return
 
-        # wrap point is inside text, break it up into separate lines
-        line1 = text[:i]
-        line2 = text[i:]
+                # scan line looking for the wrap point, keeping track if the wrap
+                # point is inside markers
+                i = 0
+                n = 0
+                mark = ''
+                while n < self._wrapcolumn and i < size:
+                    if line[i] == '\0':
+                        i += 1
+                        mark = line[i]
+                        i += 1
+                    elif line[i] == '\1':
+                        i += 1
+                        mark = ''
+                    else:
+                        i += 1
+                        n += self._display_len(line[i])
 
-        # if wrap point is inside markers, place end marker at end of first
-        # line and start marker at beginning of second line because each
-        # line will have its own table tag markup around it.
-        if mark:
-            line1 = line1 + '\1'
-            line2 = '\0' + mark + line2
+                # wrap point is inside text, break it up into separate lines
+                line1 = line[:i]
+                line2 = line[i:]
 
-        # tack on first line onto the output list
-        data_list.append((line_num, line1))
+                # if wrap point is inside markers, place end marker at end of first
+                # line and start marker at beginning of second line
+                if mark:
+                    line1 = line1 + '\1'
+                    line2 = '\0' + mark + line2
 
-        # use this routine again to wrap the remaining text
-        self._split_line(data_list, '>', line2)
+                # Send out the first part
+                yield line_id, line1
 
-    def _line_wrapper(self, diffs):
+                # loop again to wrap the remaining text
+                line_id = ''
+                line = line2
+
+    def _line_wrapper(self, fromdesc, todesc, diffs):
         """Returns iterator that splits (wraps) mdiff text lines"""
+        if fromdesc or todesc:
+            yield (
+                simple_colorize(fromdesc, "blue_bold"),
+                simple_colorize(todesc, "blue_bold"),
+            )
 
-        # pull from/to data and flags from mdiff iterator
-        for fromdata, todata, flag in diffs:
-            # check for context separators and pass them through
-            if flag is None:
-                yield fromdata, todata, flag
+        separator = self._format_line('', '', simple_colorize('---', "blue_bold"))
+        # pull from/to data and flags from diff iterator
+        for line in diffs:
+            if line is None:
+                # separator lines between context data
+                yield (separator, separator)
                 continue
-            (fromline, fromtext), (toline, totext) = fromdata, todata
+
+            flagged = line.left != line.right
+
             # for each from/to line split it at the wrap column to form
             # list of text lines.
-            fromlist, tolist = [], []
-            self._split_line(fromlist, fromline, fromtext)
-            self._split_line(tolist, toline, totext)
+            fromlist = list(self._split_line(0, line.left))
+            tolist = list(self._split_line(0, line.right))
+
             # yield from/to line in pairs inserting blank lines as
             # necessary when one side has more wrapped lines
             while fromlist or tolist:
                 if fromlist:
-                    fromdata = fromlist.pop(0)
+                    left_line = self._format_line('\0-' if flagged else '', *fromlist.pop(0))
                 else:
-                    fromdata = ('', ' ')
+                    left_line = ''
                 if tolist:
-                    todata = tolist.pop(0)
+                    right_line = self._format_line('\0+' if flagged else '', *tolist.pop(0))
                 else:
-                    todata = ('', ' ')
-                yield fromdata, todata, flag
+                    right_line = ''
+                yield left_line, right_line
 
-    def _collect_lines(self, diffs):
-        """Collects mdiff output into separate lists
-
-        Before storing the mdiff from/to data into a list, it is converted
-        into a single line of text with console markup.
-        """
-
-        fromlist, tolist, flaglist = [], [], []
-        # pull from/to data and flags from mdiff style iterator
-        for fromdata, todata, flag in diffs:
-            if (fromdata, todata, flag) == (None, None, None):
-                yield None
-            else:
-                yield (self._format_line(*fromdata),
-                       self._format_line(*todata))
-
-    def _format_line(self, linenum, text):
-        text = text.rstrip()
-        if not self.line_numbers:
-            return text
-        return self._add_line_numbers(linenum, text)
-
-    def _add_line_numbers(self, linenum, text):
-        try:
-            lid = '%d' % linenum
-        except TypeError:
-            # handle blank lines where linenum is '>' or ''
-            lid = ''
-            return text
-        return '%s %s' % (self._rpad(lid, 8), text)
+    def _format_line(self, flag, line_id, text):
+        prefix = str(line_id)
+        if flag and prefix:
+            prefix = flag + prefix + '\1'
+        return '%s %s' % (self._rpad(prefix, self.prefix), text.rstrip())
 
     def _real_len(self, s):
         l = 0
         in_esc = False
         prev = ' '
-        for c in s.replace('\0+', "").replace('\0-', "").replace('\0^', "").replace('\1', "").replace('\t', ' '):
+        trimmed = (s
+            .replace('\0+', "")
+            .replace('\0-', "")
+            .replace('\0^', "")
+            .replace('\1', "")
+            .replace('\t', ' ')
+        )
+        for c in trimmed:
             if in_esc:
                 if c == "m":
                     in_esc = False
@@ -258,8 +269,7 @@ class ConsoleDiff(object):
     def _lpad(self, s, field_width):
         return s + self._pad(s, field_width)
 
-    def make_table(self, fromlines, tolines, fromdesc='', todesc='', context=False,
-                   numlines=5):
+    def make_table(self, fromlines, tolines, fromdesc='', todesc=''):
         """Generates table of side by side comparison with change highlights
 
         Arguments:
@@ -267,50 +277,22 @@ class ConsoleDiff(object):
         tolines -- list of "to" lines
         fromdesc -- "from" file column header string
         todesc -- "to" file column header string
-        context -- set to True for contextual differences (defaults to False
-            which shows full differences).
-        numlines -- number of context lines.  When context is set True,
-            controls number of lines displayed before and after the change.
-            When context is False, controls the number of lines to place
-            the "next" link anchors before the next change (so click of
-            "next" link jumps to just before the change).
         """
-        if context:
-            context_lines = numlines
-        else:
-            context_lines = None
 
-        # change tabs to spaces before it gets more difficult after we insert
-        # markup
-        fromlines, tolines = self._tab_newline_replace(fromlines, tolines)
+        # change tabs to spaces before it gets more difficult after we insert markup
+        fromlines = map(self._tab_newline_replace, fromlines)
+        tolines = map(self._tab_newline_replace, tolines)
 
-        # create diffs iterator which generates side by side from/to data
-        diffs = difflib._mdiff(fromlines, tolines, context_lines, linejunk=None,
-                               charjunk=difflib.IS_CHARACTER_JUNK)
+        # generates side by side from/to data
+        diffs = SideBySideDiff(self.context_lines).diff_lines(fromlines, tolines)
 
-        # set up iterator to wrap lines that exceed desired width
-        diffs = self._line_wrapper(diffs)
-        diffs = self._collect_lines(diffs)
-
-        for left, right in self._generate_table(fromdesc, todesc, diffs):
+        # wrap lines that exceed desired width
+        for left, right in self._line_wrapper(fromdesc, todesc, diffs):
             yield self.colorize(
-                "%s %s" % (self._lpad(left, self.cols // 2 - 1),
-                           self._lpad(right, self.cols // 2 - 1)))
-
-    def _generate_table(self, fromdesc, todesc, diffs):
-        if fromdesc or todesc:
-            yield (simple_colorize(fromdesc, "blue"),
-                   simple_colorize(todesc, "blue"))
-
-        for i, line in enumerate(diffs):
-            if line is None:
-                # mdiff yields None on separator lines; skip the bogus ones
-                # generated for the first line
-                if i > 0:
-                    yield (simple_colorize('---', "blue"),
-                           simple_colorize('---', "blue"))
-            else:
-                yield line
+                "%s %s" % (
+                    self._lpad(left, self.cols),
+                    self._lpad(right, self.cols),
+                ))
 
     def colorize(self, s):
         def background(color):
@@ -331,7 +313,13 @@ class ConsoleDiff(object):
         C_NONE = color_codes["none"]
         colors = (C_ADD, C_SUB, C_CHG, C_NONE)
 
-        s = s.replace('\0+', C_ADD).replace('\0-', C_SUB).replace('\0^', C_CHG).replace('\1', C_NONE).replace('\t', ' ')
+        s = (s
+            .replace('\0+', C_ADD)
+            .replace('\0-', C_SUB)
+            .replace('\0^', C_CHG)
+            .replace('\1', C_NONE)
+            .replace('\t', ' ')
+        )
 
         if self.highlight:
             return s
@@ -372,6 +360,104 @@ class ConsoleDiff(object):
 
         return joined
 
+class SideBySideDiff(object):
+    Line = collections.namedtuple('Line', ['left', 'right'])
+    
+    word_search = re.compile(r'\[/?\w+\]|\S+\s*|\s+')
+    
+    def __init__(self, contextlines):
+        self.context = contextlines
+    
+    def diff_text(self, left, right):
+        return self.diff_lines(left.splitlines(True), right.splitlines(True))
+
+    def diff_lines(self, left, right):
+        self.lines = []
+        self.left = ''
+        self.right = ''
+        self.diff(left, right, 'lines')
+        self.append_line()
+        return self.lines
+    
+    def diff(self, left, right, step):
+        mangle = getattr(self, 'mangle_' + step)
+        a = mangle(left)
+        b = mangle(right)
+        cruncher = difflib.SequenceMatcher(None, a, b)
+        for tag, alo, ahi, blo, bhi in cruncher.get_opcodes():
+            handler = getattr(self, tag + '_' + step)
+            handler(a[alo:ahi], b[blo:bhi])
+    
+    def mangle_lines(self, lines):
+        # This loses the distinction of a missing line ending on the last line,
+        # but translates any line ending convention (stripped or not)
+        # to the newline convention expected by equal_words().
+        return [line.rstrip('\r\n') + '\n' for line in lines]
+    
+    def replace_lines(self, left, right):
+        self.diff(left, right, 'words')
+    
+    def append_line(self):
+        if self.left or self.right:
+            self.lines.append(self.Line(self.left, self.right))
+            self.left = ''
+            self.right = ''
+    
+    def equal_lines(self, left, right):
+        self.append_line()
+        newlines = [self.Line(line, line) for line in left]
+        if self.context:
+            if len(newlines) > self.context * 2:
+                newlines[self.context:-self.context] = [None]
+        elif self.context == 0:
+            newlines = [None]
+        self.lines.extend(newlines)
+    
+    def delete_lines(self, left, right):
+        assert not right
+        self.append_line()
+        self.lines.extend(self.Line('', line) for line in left)
+    
+    def insert_lines(self, left, right):
+        assert not left
+        self.append_line()
+        self.lines.extend(self.Line('', line) for line in right)
+    
+    def mangle_words(self, lines):
+        return self.word_search.findall(''.join(lines))
+    
+    def replace_words(self, left, right):
+        self.diff(left, right, 'chars')
+    
+    def equal_words(self, left, right):
+        text = ''.join(left)
+        for line in text.splitlines(True):
+            self.left += line
+            self.right += line
+            if line.endswith('\n'):
+                self.append_line()
+    equal_chars = equal_words
+    
+    def delete_words(self, left, right):
+        assert not right
+        on, off = '\0-', '\1'
+        self.left += on + ''.join(left) + off
+    delete_chars = delete_words
+    
+    def insert_words(self, left, right):
+        assert not left
+        on, off = '\0+', '\1'
+        self.right += on + ''.join(right) + off
+    insert_chars = insert_words
+    
+    def mangle_chars(self, words):
+        return list(''.join(words))
+    
+    def replace_chars(self, left, right):
+        on, off = '\0^', '\1'
+        self.left += on + ''.join(left) + off
+        self.right += on + ''.join(right) + off
+
 def simple_colorize(s, chosen_color):
     return "%s%s%s" % (color_codes[chosen_color], s, color_codes["none"])
 
@@ -381,33 +467,25 @@ def start():
                                    description="Show differences between files in a two column view.")
     parser.add_option("--cols", default=None,
                       help="specify the width of the screen. Autodetection is Linux only")
-    parser.add_option("--head", default=0,
+    parser.add_option("--head", default=0, type="int",
                       help="consider only the first N lines of each file")
-    parser.add_option("--highlight", default=False,
-                      action="store_true",
+    parser.add_option("--highlight", default=False, action="store_true",
                       help="color by changing the background color instead of the foreground color.  Very fast, ugly, displays all changes")
-    parser.add_option("--line-numbers", default=False,
-                      action="store_true",
+    parser.add_option("--line-numbers", default=False, action="store_true",
                       help="generate output with line numbers")
-    parser.add_option("--no-bold", default=False,
-                      action="store_true",
+    parser.add_option("--no-bold", default=False, action="store_true",
                       help="use non-bold colors; recommended for with solarized")
-    parser.add_option("--no-headers", default=False,
-                      action="store_true",
+    parser.add_option("--no-headers", default=False, action="store_true",
                       help="don't label the left and right sides with their file names")
-    parser.add_option("--numlines", default=5,
+    parser.add_option("--numlines", default=5, type="int",
                       help="how many lines of context to print; can't be combined with --whole-file")
-    parser.add_option("--recursive", default=False,
-                      action="store_true",
+    parser.add_option("--recursive", default=False, action="store_true",
                       help="recursively compare subdirectories")
-    parser.add_option("--show-all-spaces", default=False,
-                      action="store_true",
+    parser.add_option("--show-all-spaces", default=False, action="store_true",
                       help="color all non-matching whitespace including that which is not needed for drawing the eye to changes.  Slow, ugly, displays all changes")
-    parser.add_option("--version", default=False,
-                      action="store_true",
+    parser.add_option("--version", default=False, action="store_true",
                       help="print version and exit")
-    parser.add_option("--whole-file", default=False,
-                      action="store_true",
+    parser.add_option("--whole-file", default=False, action="store_true",
                       help="show the whole file instead of just changed lines and context")
 
     (options, args) = parser.parse_args()
@@ -490,15 +568,16 @@ def diff_files(options, a, b):
     lines_a = [decode(line) for line in lines_a]
     lines_b = [decode(line) for line in lines_b]
 
-    cd = ConsoleDiff(cols=int(options.cols),
-                     show_all_spaces=options.show_all_spaces,
-                     highlight=options.highlight,
-                     no_bold=options.no_bold,
-                     line_numbers=options.line_numbers)
-    for line in cd.make_table(
-            lines_a, lines_b, headers[0], headers[1],
-            context=(not options.whole_file),
-            numlines=int(options.numlines)):
+    cd = ConsoleDiff(
+        cols = int(options.cols),
+        show_all_spaces = options.show_all_spaces,
+        highlight = options.highlight,
+        no_bold = options.no_bold,
+        line_numbers = options.line_numbers,
+        context = (not options.whole_file),
+        numlines = int(options.numlines),
+    )
+    for line in cd.make_table(lines_a, lines_b, headers[0], headers[1]):
         print(line.encode("utf-8"))
         sys.stdout.flush()
 
