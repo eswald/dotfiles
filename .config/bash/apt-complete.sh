@@ -37,5 +37,10 @@ _apt_complete() {
   fi
 }
 
-complete -o default -F _apt_complete apt
+if ! command -v apt > /dev/null 2>&1
+then
+  alias apt=fake-apt
+  complete -o default -F _apt_complete apt
+fi
+
 # vim: ft=sh et sts=2 sw=2 ts=2
