@@ -160,9 +160,13 @@ class ConsoleDiff(object):
                 # point is inside markers
                 i = 0
                 width = 0
+                is_mark = False
                 for n, c in enumerate(line):
                     if c == '\0':
-                        mark = line[n:n+2]
+                        is_mark = True
+                    elif is_mark:
+                        is_mark = False
+                        mark = line[n-1:n+1]
                     elif c == '\1':
                         mark = ''
                         i = n + 1
@@ -229,8 +233,8 @@ class ConsoleDiff(object):
 
     def _format_line(self, flag, line_id, text):
         prefix = str(line_id)
-        if flag and prefix:
-            prefix = flag + prefix + '\1'
+        if prefix:
+            prefix = (flag or '\0#') + prefix + '\1'
         return '%s %s' % (self._rpad(prefix, self.prefix), text.rstrip())
 
     def _real_len(self, s):
@@ -241,6 +245,7 @@ class ConsoleDiff(object):
             .replace('\0+', "")
             .replace('\0-', "")
             .replace('\0^', "")
+            .replace('\0#', "")
             .replace('\1', "")
             .replace('\t', ' ')
         )
@@ -300,10 +305,12 @@ class ConsoleDiff(object):
             C_ADD = color_codes["green"]
             C_SUB = color_codes["red"]
             C_CHG = color_codes["yellow"]
+            C_NUM = color_codes["blue"]
         else:
             C_ADD = color_codes["green_bold"]
             C_SUB = color_codes["red_bold"]
             C_CHG = color_codes["yellow_bold"]
+            C_NUM = color_codes["blue_bold"]
 
         if self.highlight:
             C_ADD, C_SUB, C_CHG = background(C_ADD), background(C_SUB), background(C_CHG)
@@ -315,6 +322,7 @@ class ConsoleDiff(object):
             .replace('\0+', C_ADD)
             .replace('\0-', C_SUB)
             .replace('\0^', C_CHG)
+            .replace('\0#', C_NUM)
             .replace('\1', C_NONE)
             .replace('\t', ' ')
         )
@@ -324,7 +332,7 @@ class ConsoleDiff(object):
 
         if not self.show_all_spaces:
             # If there's a change consisting entirely of whitespace, don't color it.
-            return re.sub("\033\\[[01];3([123])m(\\s+)(\033\\[)", "\033[7;3\\1m\\2\\3", s)
+            return re.sub("\033\\[[01];3([1234])m(\\s+)(\033\\[)", "\033[7;3\\1m\\2\\3", s)
 
         def will_see_coloredspace(i, s):
             while i < len(s) and s[i].isspace():
@@ -361,7 +369,11 @@ class ConsoleDiff(object):
 class SideBySideDiff(object):
     Line = collections.namedtuple('Line', ['left', 'right'])
     
-    word_search = re.compile(r'\[/?\w+\]|\S+\s*|\s+')
+    # Keeping whitespace and punctuation at the end of a word makes matches better,
+    # because pure-whitespace matches are usually junk.
+    # \S and \s work slightly better for pure text than \w and \W,
+    # but this works better for code-like expressions.
+    word_search = re.compile(r'\w+\W*|\W+')
     
     def __init__(self, contextlines):
         self.context = contextlines
