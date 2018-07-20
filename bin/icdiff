@@ -246,6 +246,8 @@ class ConsoleDiff(object):
             .replace('\0-', "")
             .replace('\0^', "")
             .replace('\0#', "")
+            .replace('\0&', "")
+            .replace('\0!', "")
             .replace('\1', "")
             .replace('\t', ' ')
         )
@@ -311,6 +313,8 @@ class ConsoleDiff(object):
             C_SUB = color_codes["red_bold"]
             C_CHG = color_codes["yellow_bold"]
             C_NUM = color_codes["blue_bold"]
+        C_NEW = color_codes["green"]
+        C_OLD = color_codes["red"]
 
         if self.highlight:
             C_ADD, C_SUB, C_CHG = background(C_ADD), background(C_SUB), background(C_CHG)
@@ -323,6 +327,8 @@ class ConsoleDiff(object):
             .replace('\0-', C_SUB)
             .replace('\0^', C_CHG)
             .replace('\0#', C_NUM)
+            .replace('\0&', C_NEW)
+            .replace('\0!', C_OLD)
             .replace('\1', C_NONE)
             .replace('\t', ' ')
         )
@@ -426,12 +432,14 @@ class SideBySideDiff(object):
     def delete_lines(self, left, right):
         assert not right
         self.append_line()
-        self.lines.extend(self.Line(line, '') for line in left)
+        on, off = '\0!', '\1'
+        self.lines.extend(self.Line(on + line + off, '') for line in left)
     
     def insert_lines(self, left, right):
         assert not left
         self.append_line()
-        self.lines.extend(self.Line('', line) for line in right)
+        on, off = '\0&', '\1'
+        self.lines.extend(self.Line('', on + line + off) for line in right)
     
     def mangle_words(self, lines):
         return self.word_search.findall(''.join(lines))
